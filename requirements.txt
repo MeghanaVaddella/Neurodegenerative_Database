@@ -1,0 +1,5 @@
+pandas
+requests
+networkx
+streamlit
+streamlit-cytoscapejs
