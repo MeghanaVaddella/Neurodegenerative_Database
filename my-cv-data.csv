@@ -1,4 +1,4 @@
-protein_a,protein_b,coexpression,experimentally_determined_interaction,database_annotated,automated_textmining,combined_score,disease_associated,experimental_system,author
+protein A,protein B,Co-expression,Experimentally Determined Interaction,Database Annotated,Automated Textmining,Combined Score,Disease Associated,Experimental System,Author
 SNCAIP,SNCA,0.049,0.876,0.7,0.998,0.999,Parkinson's,Two-hybrid,Neystat M (2002)
 SFPQ,NONO,0.711,0.991,0.0,0.983,0.999,Multiple Sclerosis,Two-hybrid,Peng R (2002)
 FXR1,FMR1,0.085,0.845,0.9,0.519,0.992,Parkinson's,Two-hybrid,Zhang Y (1995)
