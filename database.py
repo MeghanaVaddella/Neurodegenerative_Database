@@ -14,7 +14,7 @@ page = st.sidebar.radio("Go to", ["Home", "Data", "Visualization Tool", "GitHub 
 # ---- LOAD DATA FROM GITHUB ----
 @st.cache_data(show_spinner=False)
 def load_data():
-    url = "https://raw.githubusercontent.com/jahnaviP05/protein-protein-database/main/cleaned_interactions.csv"
+    url = "https://github.com/MeghanaVaddella/my-cv-dataset.git"
     response = requests.get(url)
     if response.status_code == 200:
         return pd.read_csv(url)
