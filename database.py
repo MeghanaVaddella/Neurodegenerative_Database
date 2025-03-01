@@ -14,12 +14,13 @@ page = st.sidebar.radio("Go to", ["Home", "Data", "Visualization Tool", "GitHub 
 # ---- LOAD DATA FROM GITHUB ----
 @st.cache_data(show_spinner=False)
 def load_data():
-    url = "https://github.com/MeghanaVaddella/my-cv-dataset.git"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return pd.read_csv(url)
-    else:
-        st.error("Error loading dataset from GitHub. Please check the file path.")
+    url = "https://raw.githubusercontent.com/MeghanaVaddella/my-cv-dataset/main/cleaned_interactions.csv"
+    try:
+        df = pd.read_csv(url)
+        st.success("✅ Data successfully loaded!")
+        return df
+    except Exception as e:
+        st.error(f"❌ Error loading dataset: {e}")
         return pd.DataFrame()
 
 df = load_data()
@@ -70,28 +71,46 @@ elif page == "Data":
         "Download Processed Data", df.to_csv(index=False), file_name="PPI_data.csv", mime="text/csv"
     )
 
-# ---- VISUALIZATION TOOL PAGE (Only from First Code) ----
+# ---- VISUALIZATION TOOL PAGE ----
 elif page == "Visualization Tool":
     st.title("Visualization Tool")
-    st.write("### Network Visualization of PPI Data")
+    st.write("### Network Visualization of PPI Data (Pastel Theme)")
 
-    # ✅ Generate NetworkX Graph Layout
-    plt.figure(figsize=(10, 6))
-    pos = nx.spring_layout(ppi_graph, seed=42, k=0.5)  # k=0.5 reduces overlap
-    node_sizes = [ppi_graph.degree(n) * 300 for n in ppi_graph.nodes()]  # Bigger nodes for high-degree proteins
+    if df.empty:
+        st.warning("⚠ No data available to visualize. Please check the dataset.")
+    else:
+        # ✅ Generate NetworkX Graph Layout
+        plt.figure(figsize=(10, 6))
+        pos = nx.spring_layout(ppi_graph, seed=42, k=0.5)  # k=0.5 reduces overlap
+        node_sizes = [ppi_graph.degree(n) * 300 for n in ppi_graph.nodes()]  # Bigger nodes for high-degree proteins
 
-    nx.draw(
-        ppi_graph, pos, with_labels=True, node_size=node_sizes, 
-        node_color="lightblue", edge_color="gray", font_size=10
-    )
+        # ✅ Pastel Color Palette
+        pastel_colors = [
+            "#FFB6C1",  # Light Pink
+            "#FFDAB9",  # Peach
+            "#B0E0E6",  # Powder Blue
+            "#98FB98",  # Pale Green
+            "#E6E6FA",  # Lavender
+            "#F0E68C",  # Khaki
+            "#DDA0DD",  # Plum
+        ]
+        
+        node_color_map = {node: pastel_colors[i % len(pastel_colors)] for i, node in enumerate(ppi_graph.nodes())}
+        edge_color = "#C0C0C0"  # Light Gray edges
 
-    # ✅ Display Graph in Streamlit
-    st.pyplot(plt)
+        nx.draw(
+            ppi_graph, pos, with_labels=True, node_size=node_sizes,
+            node_color=[node_color_map[n] for n in ppi_graph.nodes()],  # Apply pastel colors
+            edge_color=edge_color, font_size=10
+        )
+
+        # ✅ Display Graph in Streamlit
+        st.pyplot(plt)
 
 # ---- GITHUB EDIT PAGE ----
 elif page == "GitHub Data Edit":
     st.title("GitHub Data Edit")
-    st.markdown("[Edit Data on GitHub](https://github.com/jahnaviP05/protein-protein-database/edit/main/cleaned_interactions.csv)")
+    st.markdown("[Edit Data on GitHub](https://github.com/MeghanaVaddella/my-cv-dataset/edit/main/cleaned_interactions.csv)")
 
 # ---- REMOVE STREAMLIT BRANDING ----
 st.markdown("""<style> footer {visibility: hidden;} </style>""", unsafe_allow_html=True)
