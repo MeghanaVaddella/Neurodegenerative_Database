@@ -1,0 +1,70 @@
+Neurodegenerative Disorders Data for Database
+
+1. Alzheimer’s Disease (AD)
+
+Description: A progressive neurodegenerative disorder affecting memory, cognition, and behavior due to the accumulation of amyloid-beta plaques and tau tangles.
+Cause: Protein misfolding (amyloid-beta, tau); genetic mutations (APP, PSEN1, PSEN2).
+Risk Factors: Age, family history, APOE-e4 gene, cardiovascular issues, head trauma.
+Symptoms: Memory loss, confusion, language difficulties, mood changes, impaired reasoning.
+Diagnosis Methods: Cognitive tests (MMSE, MoCA), MRI, PET scans, CSF biomarkers (amyloid-beta, tau).
+Treatment Options: Cholinesterase inhibitors (donepezil, rivastigmine), NMDA receptor antagonists (memantine), lifestyle interventions, anti-amyloid drugs (aducanumab).
+Genetic Markers: APP, PSEN1, PSEN2, APOE-e4.
+Biomarkers: Amyloid-beta (Aβ42), total tau (t-tau), phosphorylated tau (p-tau).
+Disease Progression: Mild cognitive impairment → early-stage AD → moderate AD → severe AD.
+
+
+2. Parkinson’s Disease (PD)
+
+Description: A neurodegenerative movement disorder caused by the loss of dopamine-producing neurons in the substantia nigra, leading to motor and cognitive dysfunction.
+Cause: Alpha-synuclein aggregation (Lewy bodies), dopamine depletion, genetic factors (SNCA, LRRK2, PARK7).
+Risk Factors: Aging, genetic predisposition, environmental toxins (pesticides, heavy metals), head injuries.
+Symptoms: Tremors, bradykinesia, rigidity, postural instability, cognitive impairment, mood disturbances.
+Diagnosis Methods: Clinical evaluation, DaTscan (dopamine transporter imaging), MRI to rule out other causes.
+Treatment Options: Levodopa/carbidopa, dopamine agonists (pramipexole, ropinirole), MAO-B inhibitors, deep brain stimulation (DBS).
+Genetic Markers: SNCA, LRRK2, PARK7, PINK1, PRKN.
+Biomarkers: Alpha-synuclein aggregates in CSF, reduced dopamine in PET scans.
+Disease Progression: Early-stage → moderate-stage (motor fluctuations) → advanced-stage (severe disability).
+
+
+
+3. Amyotrophic Lateral Sclerosis (ALS)
+
+Description: A progressive neurodegenerative disorder affecting motor neurons, leading to muscle weakness, atrophy, and respiratory failure.
+Cause: Motor neuron degeneration; genetic mutations (SOD1, C9orf72, TARDBP, FUS); excitotoxicity, oxidative stress.
+Risk Factors: Family history, age (40–70 years), male gender, exposure to neurotoxins.
+Symptoms: Muscle weakness, twitching, difficulty speaking/swallowing (dysphagia), respiratory failure.
+Diagnosis Methods: Electromyography (EMG), nerve conduction studies, MRI, genetic testing.
+Treatment Options: Riluzole, edaravone, physical therapy, non-invasive ventilation support.
+Genetic Markers: C9orf72, SOD1, TARDBP, FUS.
+Biomarkers: Neurofilament light chain (NFL) in CSF, TDP-43 protein inclusions.
+Disease Progression: Limb-onset (weakness in limbs) → bulbar-onset (speech/swallowing affected) → late-stage (respiratory failure).
+
+
+
+4. Multiple Sclerosis (MS)
+
+Description: A chronic autoimmune disorder where the immune system attacks the myelin sheath in the central nervous system, causing neurological impairment.
+Cause: Autoimmune reaction, environmental factors (low vitamin D, viral infections), genetic predisposition (HLA-DRB1).
+Risk Factors: Female sex, Epstein-Barr virus (EBV) infection, smoking, vitamin D deficiency.
+Symptoms: Vision problems, muscle weakness, spasticity, fatigue, cognitive dysfunction.
+Diagnosis Methods: MRI (brain/spinal cord lesions), lumbar puncture (CSF oligoclonal bands), evoked potential tests.
+Treatment Options: Disease-modifying therapies (interferon beta, natalizumab, fingolimod), steroids for relapses, physical therapy.
+Genetic Markers: HLA-DRB1, IL7R.
+Biomarkers: Oligoclonal bands in CSF, neurofilament light chain (NFL).
+Disease Progression: Relapsing-remitting MS (RRMS) → secondary progressive MS (SPMS) → primary progressive MS (PPMS).
+
+
+
+
+5. Friedreich’s Ataxia (FRDA)
+
+Description: A rare inherited neurodegenerative disorder affecting the nervous system and heart, caused by mitochondrial dysfunction.
+Cause: Expansion of GAA repeats in the FXN gene, leading to frataxin deficiency and oxidative stress.
+Risk Factors: Autosomal recessive inheritance; no known environmental triggers.
+Symptoms: Gait ataxia, speech difficulties (dysarthria), scoliosis, cardiomyopathy, diabetes.
+Diagnosis Methods: Genetic testing for FXN mutations, nerve conduction studies, echocardiogram.
+Treatment Options: No cure; supportive therapy (physical therapy, speech therapy, cardiac management).
+Genetic Markers: FXN (GAA repeat expansion).
+Biomarkers: Reduced frataxin levels in blood or fibroblasts.
+Disease Progression: Early onset (childhood) → loss of ambulation → severe cardiomyopathy → reduced lifespan.
+
