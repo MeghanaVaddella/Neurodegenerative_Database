@@ -26,7 +26,6 @@ Biomarkers: Alpha-synuclein aggregates in CSF, reduced dopamine in PET scans.
 Disease Progression: Early-stage → moderate-stage (motor fluctuations) → advanced-stage (severe disability).
 
 
-
 3. Amyotrophic Lateral Sclerosis (ALS)
 
 Description: A progressive neurodegenerative disorder affecting motor neurons, leading to muscle weakness, atrophy, and respiratory failure.
@@ -40,7 +39,6 @@ Biomarkers: Neurofilament light chain (NFL) in CSF, TDP-43 protein inclusions.
 Disease Progression: Limb-onset (weakness in limbs) → bulbar-onset (speech/swallowing affected) → late-stage (respiratory failure).
 
 
-
 4. Multiple Sclerosis (MS)
 
 Description: A chronic autoimmune disorder where the immune system attacks the myelin sheath in the central nervous system, causing neurological impairment.
@@ -52,8 +50,6 @@ Treatment Options: Disease-modifying therapies (interferon beta, natalizumab, fi
 Genetic Markers: HLA-DRB1, IL7R.
 Biomarkers: Oligoclonal bands in CSF, neurofilament light chain (NFL).
 Disease Progression: Relapsing-remitting MS (RRMS) → secondary progressive MS (SPMS) → primary progressive MS (PPMS).
-
-
 
 
 5. Friedreich’s Ataxia (FRDA)
