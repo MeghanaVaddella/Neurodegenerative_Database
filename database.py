@@ -2,115 +2,340 @@ import streamlit as st
 import pandas as pd
 import requests
 import networkx as nx
+from pyvis.network import Network
+import streamlit.components.v1 as components
+import py3Dmol
 import matplotlib.pyplot as plt
+import numpy as np
 
-# ---- PAGE CONFIGURATION ----
-st.set_page_config(page_title="PPI Network Database", layout="wide")
+# --- PAGE CONFIG ---
+st.set_page_config(
+    page_title="Protein-Protein Interaction for Neurodegenerative Diseases",
+    layout="wide"
+)
 
-# ---- SIDEBAR NAVIGATION ----
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Data", "Visualization Tool", "GitHub Data Edit"])
+# --- THEME TOGGLE SWITCH (icon-only button) ---
+dark_mode = st.toggle("", key="darkmode_toggle")
 
-# ---- LOAD DATA FROM GITHUB ----
+# Inject Dark Mode CSS
+if dark_mode:
+    st.markdown("""
+        <style>
+        body, .stApp {
+            background-color: #0e1117;
+            color: #FAFAFA;
+        }
+        .css-18e3th9, .css-1d391kg {
+            background-color: #0e1117;
+        }
+        table {
+            color: #FAFAFA !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+# ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
-def load_data():
-    url = "https://raw.githubusercontent.com/MeghanaVaddella/my-cv-dataset/main/cleaned_interactions.csv"
+def load_ppi_data():
+    url = "https://raw.githubusercontent.com/MeghanaVaddella/my-cv-dataset/refs/heads/main/my-cv-data.csv"
     try:
-        df = pd.read_csv(url)
-        st.success("✅ Data successfully loaded!")
-        return df
+        return pd.read_csv(url)
     except Exception as e:
-        st.error(f"❌ Error loading dataset: {e}")
+        st.error(f"Error loading PPI data: {e}")
         return pd.DataFrame()
 
-df = load_data()
+@st.cache_data(show_spinner=False)
+def load_3d_data():
+    urls = [
+        "https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/refs/heads/main/3D%20Structure-1.csv",
+        "https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/refs/heads/main/3D%20Structure-2.csv"
+    ]
+    try:
+        dfs = [pd.read_csv(url) for url in urls]
+        return pd.concat(dfs, ignore_index=True)
+    except Exception as e:
+        st.error(f"Error loading 3D structure data: {e}")
+        return pd.DataFrame()
 
-# ---- CREATE NETWORKX GRAPH ----
-def create_ppi_graph(data):
-    G = nx.Graph()
-    for _, row in data.iterrows():
-        G.add_edge(str(row["Protein_A"]), str(row["Protein_B"]))
-    return G
+@st.cache_data(show_spinner=False)
+def load_no_3d_data():
+    url = "https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/refs/heads/main/No%203D%20Structure.csv"
+    try:
+        return pd.read_csv(url)
+    except Exception as e:
+        st.error(f"Error loading No 3D structure data: {e}")
+        return pd.DataFrame()
 
-ppi_graph = create_ppi_graph(df)
+@st.cache_data(show_spinner=False)
+def load_disease_data():
+    url = "https://raw.githubusercontent.com/MeghanaVaddella/my-cv-dataset/refs/heads/main/disease%20data.txt"
+    try:
+        response = requests.get(url)
+        lines = response.text.splitlines()
+        return [line.strip() for line in lines if line.strip()][1:]
+    except Exception as e:
+        st.error(f"Error loading disease text: {e}")
+        return []
 
-# ---- HOME PAGE ----
-if page == "Home":
-    st.title("Protein-Protein Interactions of Neurodegenerative Disorders")
-    st.write("""
-    This database provides curated protein-protein interaction (PPI) data relevant to neurodegenerative diseases.
-    It integrates data from STRING, BioGRID, and IntAct, with functional annotations and network topology analysis.
-    """)
+# ---- LOAD ALL ----
+ppi_df = load_ppi_data()
+df_3d = load_3d_data()
+no_structure_df = load_no_3d_data()
+disease_text = load_disease_data()
 
-    # Search bars for proteins
-    col1, col2 = st.columns(2)
-    with col1:
-        protein_a = st.text_input("Search for Protein A:")
-    with col2:
-        protein_b = st.text_input("Search for Protein B:")
+# ---- TABS ----
+tabs = st.tabs([
+    "Home", 
+    "Data", 
+    "3D Structure Data", 
+    "3D Visualizer", 
+    "GitHub Edit"
+])
 
-    # Search and display results
-    if protein_a or protein_b:
-        filtered_df = df[
-            (df.iloc[:, 0].astype(str).str.contains(protein_a, case=False, na=False)) |
-            (df.iloc[:, 1].astype(str).str.contains(protein_b, case=False, na=False))
-        ]
-        
-        st.write(f"### Search Results for '{protein_a}' and '{protein_b}'")
-        if not filtered_df.empty:
-            st.dataframe(filtered_df)
+# ---- HOME TAB ----
+with tabs[0]:
+    st.header("🧠 Neurodegenerative Disease Overview")
+    keywords = [
+        "Alzheimer's Disease", 
+        "Parkinson's Disease", 
+        "Amyotrophic Lateral Sclerosis (ALS)", 
+        "Multiple Sclerosis (MS)", 
+        "Friedreich’s Ataxia (FA)"
+    ]
+    for paragraph in disease_text:
+        for keyword in keywords:
+            if keyword in paragraph:
+                paragraph = paragraph.replace(keyword, f"<span style='color:#d62728; font-weight:bold;'>{keyword}</span>")
+        st.markdown(paragraph, unsafe_allow_html=True)
+
+# ---- DATA TAB ----
+with tabs[1]:
+    st.header("Protein-Protein Interaction Data")
+    st.dataframe(ppi_df, use_container_width=True, hide_index=True)
+    st.download_button("Download PPI CSV", ppi_df.to_csv(index=False), "PPI_data.csv", "text/csv")
+
+    st.subheader("Visualize Interactions")
+    selected_protein = st.selectbox("Choose Protein", pd.unique(ppi_df[['Protein A', 'Protein B']].values.ravel('K')))
+
+    def build_ppi_graph(protein, df):
+        G = nx.Graph()
+        edges = df[(df['Protein A'] == protein) | (df['Protein B'] == protein)]
+        for _, row in edges.iterrows():
+            G.add_edge(row['Protein A'], row['Protein B'])
+        net = Network(height="600px", width="100%", directed=False)
+        net.from_nx(G)
+        net.save_graph("ppi_graph.html")
+        return "ppi_graph.html"
+
+    if st.button("Show PPI Network"):
+        if not ppi_df.empty:
+            file_path = build_ppi_graph(selected_protein, ppi_df)
+            components.html(open(file_path, 'r').read(), height=600)
+            with open(file_path, "rb") as f:
+                st.download_button("Download Network HTML", f, "ppi_network.html", "text/html")
         else:
-            st.write("### No interactions found")
+            st.warning("PPI data is empty.")
 
-# ---- DATA PAGE ----
-elif page == "Data":
-    st.title("PPI Data")
-    st.write("### Full Protein-Protein Interaction Data")
-    st.dataframe(df)
-    st.download_button(
-        "Download Processed Data", df.to_csv(index=False), file_name="PPI_data.csv", mime="text/csv"
-    )
+# ---- 3D STRUCTURE TAB ----
+with tabs[2]:
+    st.header("3D Structure Data")
+    st.dataframe(df_3d, use_container_width=True, hide_index=True)
+    st.download_button("Download 3D Structure CSV", df_3d.to_csv(index=False), "3D_structure_data.csv", "text/csv")
 
-# ---- VISUALIZATION TOOL PAGE ----
-elif page == "Visualization Tool":
-    st.title("Visualization Tool")
-    st.write("### Network Visualization of PPI Data (Pastel Theme)")
+    st.subheader("No 3D Structure Data")
+    st.dataframe(no_structure_df, use_container_width=True, hide_index=True)
+    st.download_button("Download No 3D Structure CSV", no_structure_df.to_csv(index=False), "No_3D_Structure.csv", "text/csv")
 
-    if df.empty:
-        st.warning("⚠ No data available to visualize. Please check the dataset.")
-    else:
-        # ✅ Generate NetworkX Graph Layout
-        plt.figure(figsize=(10, 6))
-        pos = nx.spring_layout(ppi_graph, seed=42, k=0.5)  # k=0.5 reduces overlap
-        node_sizes = [ppi_graph.degree(n) * 300 for n in ppi_graph.nodes()]  # Bigger nodes for high-degree proteins
 
-        # ✅ Pastel Color Palette
-        pastel_colors = [
-            "#FFB6C1",  # Light Pink
-            "#FFDAB9",  # Peach
-            "#B0E0E6",  # Powder Blue
-            "#98FB98",  # Pale Green
-            "#E6E6FA",  # Lavender
-            "#F0E68C",  # Khaki
-            "#DDA0DD",  # Plum
-        ]
-        
-        node_color_map = {node: pastel_colors[i % len(pastel_colors)] for i, node in enumerate(ppi_graph.nodes())}
-        edge_color = "#C0C0C0"  # Light Gray edges
+# ---- 3D VISUALIZER TAB ----
+with tabs[3]:
+    st.write("### 3D Protein Structure Visualizer")
 
-        nx.draw(
-            ppi_graph, pos, with_labels=True, node_size=node_sizes,
-            node_color=[node_color_map[n] for n in ppi_graph.nodes()],  # Apply pastel colors
-            edge_color=edge_color, font_size=10
-        )
+    # MolStar Viewer using PDB IDs from your dataset
+    if not df_3d.empty:
+        col1, col2 = st.columns(2)
 
-        # ✅ Display Graph in Streamlit
-        st.pyplot(plt)
+        with col1:
+            search_protein_a = st.text_input("🔍 Search Protein A")
+        with col2:
+            search_protein_b = st.text_input("🔍 Search Protein B")
 
-# ---- GITHUB EDIT PAGE ----
-elif page == "GitHub Data Edit":
-    st.title("GitHub Data Edit")
-    st.markdown("[Edit Data on GitHub](https://github.com/MeghanaVaddella/my-cv-dataset/edit/main/cleaned_interactions.csv)")
+        result_col1, result_col2 = st.columns(2)
+        pdb_ids = []
 
-# ---- REMOVE STREAMLIT BRANDING ----
-st.markdown("""<style> footer {visibility: hidden;} </style>""", unsafe_allow_html=True)
+        if search_protein_a:
+            protein_a_data = df_3d[df_3d['Protein A'].str.contains(search_protein_a, case=False, na=False)]
+            if not protein_a_data.empty:
+                row = protein_a_data.iloc[0]
+                with result_col1:
+                    st.write(f"**🧬 Protein A:** {row['Protein A']}")
+                    st.write(f"**UniProt ID A:** {row['UniProtID A']}")
+
+                    pdb_ids_a = row['PDB ID A'].split(", ")
+                    if pdb_ids_a[0] != "NA":
+                        pdb_links_a = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_a])
+                        st.markdown(f"🔗 **PDB IDs A:** {pdb_links_a}", unsafe_allow_html=True)
+                        pdb_ids.extend(pdb_ids_a)
+            else:
+                with result_col1:
+                    st.warning("No matching Protein A found.")
+
+        if search_protein_b:
+            protein_b_data = df_3d[df_3d['Protein B'].str.contains(search_protein_b, case=False, na=False)]
+            if not protein_b_data.empty:
+                row = protein_b_data.iloc[0]
+                with result_col2:
+                    st.write(f"**🧬 Protein B:** {row['Protein B']}")
+                    st.write(f"**UniProt ID B:** {row['UniProtID B']}")
+
+                    pdb_ids_b = row['PDB ID B'].split(", ")
+                    if pdb_ids_b[0] != "NA":
+                        pdb_links_b = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_b])
+                        st.markdown(f"🔗 **PDB IDs B:** {pdb_links_b}", unsafe_allow_html=True)
+                        pdb_ids.extend(pdb_ids_b)
+            else:
+                with result_col2:
+                    st.warning("No matching Protein B found.")
+
+        st.write("### 🧬 Mol* (MolStar) Viewer")
+        pdb_ids = list(filter(lambda x: x != "NA", pdb_ids))
+
+        if pdb_ids:
+            molstar_url = f"https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
+            st.components.v1.iframe(molstar_url, width=1000, height=600)
+        else:
+            st.warning("No valid PDB IDs found for visualization.")
+
+    st.markdown("---")
+
+    # AlphaFold-based 3D Viewer using py3Dmol
+    st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
+
+    def fetch_alphafold_pdb(uniprot_id):
+        url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.text
+        return None
+
+    col3, col4 = st.columns(2)
+    with col3:
+        uid1 = st.text_input("Enter UniProt ID for Protein A (AlphaFold)", key="uid1").strip()
+    with col4:
+        uid2 = st.text_input("Enter UniProt ID for Protein B (AlphaFold)", key="uid2").strip()
+
+    if uid1 and uid2:
+        pdb1 = fetch_alphafold_pdb(uid1)
+        pdb2 = fetch_alphafold_pdb(uid2)
+
+        if pdb1 and pdb2:
+            st.subheader("🧪 AlphaFold 3D Viewer")
+            viewer = py3Dmol.view(width=1000, height=600)
+            viewer.addModel(pdb1, "pdb")
+            viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
+            viewer.addModel(pdb2, "pdb")
+            viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
+            viewer.setBackgroundColor("white")
+            viewer.zoomTo()
+            st.components.v1.html(viewer._make_html(), height=600)
+
+            combined_pdb = f"REMARK   Protein A: {uid1}\n{pdb1}\nREMARK   Protein B: {uid2}\n{pdb2}"
+            st.subheader("💾 Download Combined Structure")
+            st.download_button(
+                label="Download PDB for Chimera",
+                data=combined_pdb,
+                file_name=f"{uid1}_{uid2}_combined.pdb",
+                mime="chemical/x-pdb"
+            )
+        else:
+            st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
+
+    st.markdown("---")
+
+    # AlphaFold-Multimer FASTA Generator + Custom PDB Upload
+    st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
+
+    colA, colB = st.columns(2)
+    with colA:
+        uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
+    with colB:
+        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
+
+    def fetch_sequence(uniprot_id):
+        url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
+        response = requests.get(url)
+        if response.ok:
+            return response.text
+        else:
+            return None
+
+    if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
+        if uniprot_id1 and uniprot_id2:
+            seq1 = fetch_sequence(uniprot_id1)
+            seq2 = fetch_sequence(uniprot_id2)
+            if seq1 and seq2:
+                combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
+                st.success("FASTA file generated successfully.")
+                st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
+                st.code(combined_fasta)
+
+                # Show the Colab link after FASTA is displayed
+                colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
+                st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook](" + colab_link + ")**", unsafe_allow_html=True)
+
+            else:
+                st.error("Error fetching sequences. Please check the UniProt IDs.")
+        else:
+            st.warning("Please enter both UniProt IDs.")
+
+    st.subheader("📦 Upload Predicted PDB File from AlphaFold")
+    pdb_file = st.file_uploader("Upload PDB file", type=["pdb"])
+
+    if pdb_file:
+        pdb_str = pdb_file.read().decode("utf-8")
+        st.success("✅ PDB uploaded. Rendering 3D structure...")
+
+        # Create layout: Viewer (left) | PDB text + Download (right)
+        col_left, col_right = st.columns([2, 1])  # Wider 3D view, narrower text
+
+        with col_left:
+            view = py3Dmol.view(width=700, height=500)
+            view.addModel(pdb_str, "pdb")
+            view.setStyle({'cartoon': {'color': 'spectrum'}})  # Rainbow coloring
+            view.setBackgroundColor("white")
+            view.zoomTo()
+            html = view._make_html()
+            st.components.v1.html(html, height=500)
+
+        with col_right:
+            st.markdown("📄 **PDB File Content:**")
+            st.text_area("Raw PDB Content", value=pdb_str, height=500, key="pdb_display")
+            st.download_button(
+                label="💾 Download PDB Content",
+                data=pdb_str,
+                file_name="uploaded_structure.pdb",
+                mime="chemical/x-pdb"
+            )
+
+# ---- GITHUB EDIT TAB ----
+with tabs[4]:
+    st.header("🛠️ GitHub Edit Zone")
+
+    st.markdown("""
+      USE THIS SECTION TO ACCESS AND EDIT THE DATASETS DIRECTLY FROM THE GITHUB
+    """) 
+
+    github_links = {
+        "PPI Data (CSV)": "https://github.com/MeghanaVaddella/my-cv-dataset/blob/main/my-cv-data.csv",
+        "Disease Text (TXT)": "https://github.com/MeghanaVaddella/my-cv-dataset/blob/main/disease%20data.txt",
+        "3D Structure Data 1": "https://github.com/MeghanaVaddella/Neurodegenerative_Database/blob/main/3D%20Structure-1.csv",
+        "3D Structure Data 2": "https://github.com/MeghanaVaddella/Neurodegenerative_Database/blob/main/3D%20Structure-2.csv",
+        "No 3D Structure (CSV)": "https://github.com/MeghanaVaddella/Neurodegenerative_Database/blob/main/No%203D%20Structure.csv"
+    }
+
+    for label, url in github_links.items():
+        st.markdown(f"- 🔗 **[{label}]({url})**")
+
+    st.markdown("""
+    📢 **CHANGES IN THE GITHUB WILL BE REFLECTED IN THE APP WHEN THE PAGE IS RELOADED!!**
+    """)   
