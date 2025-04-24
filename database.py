@@ -80,40 +80,6 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Navigation and Filters (Inline under header) ---
-st.markdown("### 🔍 Navigate & Filter")
-
-nav_col, disease_col, data_col = st.columns([1.2, 1.5, 2])
-
-with nav_col:
-    page = st.radio("Go to", ["🏠 Home", "🧬 PPI Data", "🧠 Pathways", "📊 Expression"], label_visibility="collapsed")
-
-with disease_col:
-    selected_disease = st.selectbox("🧪 Select Disease", ["Alzheimer's", "Parkinson's", "ALS", "Huntington's"])
-
-with data_col:
-    data_type = st.multiselect("📂 Data Type", ["Gene Expression", "PPI", "Pathway", "Drug Target"])
-
-st.markdown("---")
-
-# --- Page Content Logic ---
-if page == "🏠 Home":
-    st.subheader("Welcome")
-    st.write("Welcome to NEUROGEN PPI — your gateway to neurodegenerative network insights.")
-
-elif page == "🧬 PPI Data":
-    st.subheader("Protein-Protein Interaction Data")
-    st.write(f"Showing PPI data for **{selected_disease}**.")
-    st.write(f"Data Types selected: {', '.join(data_type) if data_type else 'None'}")
-
-elif page == "🧠 Pathways":
-    st.subheader("Pathway Analysis")
-    st.write(f"Exploring pathways related to **{selected_disease}**.")
-
-elif page == "📊 Expression":
-    st.subheader("Gene Expression Insights")
-    st.write(f"Gene expression data filtered by: **{selected_disease}**, {', '.join(data_type) if data_type else 'None'}")
-
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
 def load_ppi_data():
