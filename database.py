@@ -35,13 +35,14 @@ if dark_mode:
     text_color = "#250b0f"       # Header and Font Color
     input_bg = "#7b6261"         # Search/Input Background
 else:
-    # Light theme (unchanged)
-    header_bg = "#504448"
-    body_bg = "#7E7278"
-    button_bg = "#A89A91"
-    box_bg = "#C6B0DD"
-    text_color = "#000000"
-    input_bg = "#A89A91"
+   # Light theme using new aesthetic palette
+header_bg = "#716361"          # Granite Gray
+body_bg = "#B8B3B1"            # Philippine Silver
+button_bg = "#5D4459"          # Eggplant
+box_bg = "#EAE7E5"             # Light neutral for data tables
+text_color = "#362F32"         # Dark Charcoal
+input_bg = "#5D4459"           # Eggplant (consistent with buttons)
+
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
