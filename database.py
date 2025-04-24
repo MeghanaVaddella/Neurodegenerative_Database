@@ -8,50 +8,69 @@ import py3Dmol
 import matplotlib.pyplot as plt
 import numpy as np
 
-import streamlit as st
-
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Dark Mode Toggle (Top-Left) ---
-col1, col2 = st.columns([1, 20])  # wide right column, small left column
+# --- Inject Custom Font and CSS from GitHub ---
+st.markdown("""
+    <style>
+    @font-face {
+        font-family: 'GlowingMidnight';
+        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/Glowing%20Midnight%20.ttf') format('truetype');
+    }
+
+    .header-text {
+        font-family: 'GlowingMidnight', cursive;
+        font-size: 60px;
+        text-align: center;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        color: #4A90E2;
+    }
+
+    .dark-mode-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'GlowingMidnight', cursive;
+        font-size: 18px;
+        margin-top: 0.8rem;
+        margin-left: 1rem;
+    }
+
+    .stApp {
+        transition: background-color 0.3s ease;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Top Row: Dark Mode Toggle on the Left ---
+col1, col2 = st.columns([2, 10])
 with col1:
-    dark_mode = st.toggle("🌙Dark Mode", key="darkmode_toggle", label_visibility="collapsed")
+    st.markdown("<div class='dark-mode-toggle'>🌙 <span>Dark Mode</span></div>", unsafe_allow_html=True)
+    dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Inject Dark Mode CSS ---
-if dark_mode:
-    st.markdown("""
-        <style>
-        body, .stApp {
-            background-color: #0e1117;
-            color: #FAFAFA;
-        }
-        .css-18e3th9, .css-1d391kg, .block-container {
-            background-color: #0e1117;
-        }
-        table {
-            color: #FAFAFA !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-        <style>
-        body, .stApp {
-            background-color: #F5F8FA;
-            color: #1F2D3D;
-        }
-        .css-18e3th9, .css-1d391kg, .block-container {
-            background-color: #F5F8FA;
-        }
-        table {
-            color: #1F2D3D !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+# --- Apply Theme Colors Based on Mode ---
+bg_color = "#0e1117" if dark_mode else "#F5F8FA"
+text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
 
-# --- Page Header (optional) ---
-st.markdown("<h1 style='text-align:center;'>NEUROGEN PPI</h1>", unsafe_allow_html=True)
+st.markdown(f"""
+    <style>
+    body, .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
+    .css-18e3th9, .css-1d391kg, .block-container {{
+        background-color: {bg_color} !important;
+    }}
+    table {{
+        color: {text_color} !important;
+    }}
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Page Header ---
+st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
