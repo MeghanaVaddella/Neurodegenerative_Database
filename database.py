@@ -17,7 +17,8 @@ def load_font_base64(font_path):
     with open(font_path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-poisoned_heart_base64 = load_font_base64("/mnt/data/poisoned_heart_font/The Poisoned Heart.otf")
+# ✅ Corrected paths
+poisoned_heart_base64 = load_font_base64("/mnt/data/The Poisoned Heart.otf")
 glowing_midnight_base64 = load_font_base64("/mnt/data/glowing_midnight_assets/Glowing Midnight .ttf")
 
 # --- Inject Fonts and Styles ---
@@ -56,25 +57,16 @@ st.markdown(f"""
         background-color: #4A90E2;
         color: #0e1117;
     }}
-
-    .stApp {{
-        transition: background-color 0.3s ease;
-    }}
     </style>
 """, unsafe_allow_html=True)
 
 # --- Dark Mode Toggle ---
 dark_mode = st.sidebar.toggle("🌙 Dark Mode")
 
-# --- Apply theme colors ---
-if dark_mode:
-    bg_color = "#0e1117"
-    text_color = "#FAFAFA"
-    header_color = "#4A90E2"
-else:
-    bg_color = "#F0F4F8"
-    text_color = "#1F2D3D"
-    header_color = "#2C3E50"
+# --- Dynamic Theme Styling ---
+bg_color = "#0e1117" if dark_mode else "#F0F4F8"
+text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
+header_color = "#4A90E2" if dark_mode else "#2C3E50"
 
 st.markdown(f"""
     <style>
@@ -88,14 +80,10 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Display Custom Header ---
+# --- Header ---
 st.markdown("<div class='poisoned-heart-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
-# --- Simulated Button Example ---
-if st.button("Load PPI Data", key="load_button"):
-    st.success("Data loading initiated!")
-
-# --- Custom HTML Button Example ---
+# --- HTML Button Styled Example ---
 st.markdown("""
     <div style='text-align:center; margin-top:30px;'>
         <button class='custom-button'>Explore Network</button>
