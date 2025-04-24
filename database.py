@@ -32,12 +32,14 @@ if dark_mode:
     button_bg = "#D2B48C"        # Tan
     box_bg = "#6F4E37"           # Coffee
     text_color = "#E0B0FF"       # Soft Purple
+    header_text_color = "#E0B0FF"
 else:
-    header_bg = "#504448"        # Page Header Background (from palette)
-    body_bg = "#7E7278"          # App Background + Tabs (from palette)
-    button_bg = "#A89A91"        # Button + Search bar background (from palette)
-    box_bg = "#C6B0DD"           # Data Box (from palette)
-    text_color = "#000000"       # Black Font
+    header_bg = "#504448"        # Page Header Background
+    body_bg = "#FFFFFF"          # Light default (Removed muted mauve)
+    button_bg = "#A89A91"        # Button + Search bar background
+    box_bg = "#C6B0DD"           # Data Box
+    text_color = "#000000"       # General text (Black)
+    header_text_color = "#7E7278"  # Page Header Text Color (Muted Mauve)
 
 # --- Inject Unified Custom Styling ---
 st.markdown(f"""
@@ -58,7 +60,7 @@ st.markdown(f"""
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: {text_color};
+        color: {header_text_color};
         letter-spacing: 2px;
     }}
     .dark-mode-bar {{
