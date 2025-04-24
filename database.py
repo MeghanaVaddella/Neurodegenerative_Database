@@ -11,7 +11,7 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Inject MADEVoyager Font + Styling ---
+# --- Inject MADEVoyager Font + Custom Styling ---
 st.markdown("""
     <style>
     @font-face {
@@ -25,20 +25,24 @@ st.markdown("""
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: #2C3E50; /* dark blue */
+        color: #2C3E50;
         letter-spacing: 2px;
     }
 
-    .dark-mode-bar {
+    .dark-toggle-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 1rem;
+        margin-top: -40px;
+        margin-bottom: 10px;
+    }
+
+    .dark-toggle-label {
         font-size: 16px;
         font-family: 'Segoe UI', sans-serif;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 0.5rem;
-        padding-left: 1rem;
-        margin-top: -10px;
-        margin-bottom: 15px;
+        margin-right: 0.5rem;
+        color: inherit;
     }
 
     .stApp {
@@ -50,14 +54,27 @@ st.markdown("""
 # --- Header ---
 st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
-# --- Dark Mode Toggle just above the tab/navigation bar ---
-st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
-dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
+# --- Dark Mode Toggle Left of Tab Bar ---
+col1, col2 = st.columns([0.05, 0.95])
+with col1:
+    st.markdown("<div class='dark-toggle-bar'><span class='dark-toggle-label'>🌙</span></div>", unsafe_allow_html=True)
+    dark_mode = st.toggle(" ", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Apply Theme Colors ---
-bg_color = "#0e1117" if dark_mode else "#F5F8FA"
-text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
+# --- Color Palettes ---
+if dark_mode:
+    bg_color = "#2B2D42"  # Space Cadet
+    secondary_color = "#708090"  # Slate Gray
+    accent_color = "#D2B48C"  # Tan
+    highlight_color = "#6F4E37"  # Coffee
+    text_color = "#E0B0FF"  # Caput Mortuum-like light
+else:
+    bg_color = "#F5F8FA"
+    secondary_color = "#DCE3EA"
+    accent_color = "#EDE6DB"
+    highlight_color = "#CBBFBB"
+    text_color = "#1F2D3D"
 
+# --- Apply Theme Styles ---
 st.markdown(f"""
     <style>
     body, .stApp {{
@@ -66,6 +83,15 @@ st.markdown(f"""
     }}
     .css-18e3th9, .css-1d391kg, .block-container {{
         background-color: {bg_color} !important;
+    }}
+    .stButton>button {{
+        background-color: {accent_color};
+        color: {text_color};
+        border-radius: 0.5rem;
+    }}
+    .stSelectbox>div>div {{
+        background-color: {secondary_color};
+        color: {text_color};
     }}
     table {{
         color: {text_color} !important;
