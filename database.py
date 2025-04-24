@@ -11,27 +11,57 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Inject MADEVoyager Font + Styling ---
+# --- Inject MADEVoyager Font ---
 st.markdown("""
     <style>
     @font-face {
         font-family: 'MADEVoyager';
         src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/MADEVoyagerPERSONAL_USE-Bold.otf') format('opentype');
     }
+    </style>
+""", unsafe_allow_html=True)
 
-    .header-text {
+# --- Dark Mode Toggle ---
+st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
+dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
+
+# --- Apply Light/Dark Mode Theme Styling ---
+if dark_mode:
+    header_bg = "#2B2D42"        # Dark Header
+    body_bg = "#708090"          # Slate Gray
+    button_bg = "#D2B48C"        # Tan
+    box_bg = "#6F4E37"           # Coffee
+    text_color = "#E0B0FF"       # Soft Purple
+else:
+    header_bg = "#504448"        # Page Header Background (from palette)
+    body_bg = "#7E7278"          # App Background + Tabs (from palette)
+    button_bg = "#A89A91"        # Button + Search bar background (from palette)
+    box_bg = "#C6B0DD"           # Data Box (from palette)
+    text_color = "#000000"       # Black Font
+
+# --- Inject Unified Custom Styling ---
+st.markdown(f"""
+    <style>
+    body, .stApp {{
+        background-color: {body_bg};
+        color: {text_color};
+    }}
+    .block-container {{
+        background-color: {body_bg} !important;
+    }}
+    .header-text {{
+        background-color: {header_bg};
+        padding: 1.2rem;
+        border-radius: 0;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        background-color: #504448; /* Header background */
-        color: black;
-        padding: 0.3em;
-        border-radius: 0.5em;
-    }
-
-    .dark-mode-bar {
+        color: {text_color};
+        letter-spacing: 2px;
+    }}
+    .dark-mode-bar {{
         font-size: 16px;
         font-family: 'Segoe UI', sans-serif;
         display: flex;
@@ -41,55 +71,19 @@ st.markdown("""
         padding-left: 1rem;
         margin-top: -10px;
         margin-bottom: 10px;
-    }
-
-    .stApp {
-        transition: background-color 0.3s ease;
-    }
-
-    button, .stButton > button {
-        background-color: #A89A91 !important; /* Button background */
-        color: black !important;
-        font-weight: bold;
-    }
-
-    .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {
-        background-color: #C6B0DD !important; /* Box/Container color */
-        color: black !important;
-    }
-
-    .block-container {
-        padding-top: 0rem;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# --- Dark Mode Toggle ---
-st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
-dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
-
-# --- Apply Light/Dark Theme Colors ---
-if dark_mode:
-    bg_color = "#2B2D42"  # Space Cadet
-    secondary_color = "#708090"  # Slate Gray
-    button_color = "#D2B48C"  # Tan
-    box_color = "#6F4E37"  # Coffee
-    text_color = "#E0B0FF"  # Caput Mortuum-like
-else:
-    bg_color = "#7E7278"       # App Background (Muted Mauve)
-    secondary_color = "#504448"  # Header Background (Warm Slate)
-    button_color = "#A89A91"     # Button Background (Dusty Beige)
-    box_color = "#C6B0DD"        # Box Color (Soft Lavender)
-    text_color = "#000000"       # Text (Black)
-
-st.markdown(f"""
-    <style>
-    body, .stApp {{
-        background-color: {bg_color};
-        color: {text_color};
     }}
-    .css-18e3th9, .css-1d391kg, .block-container {{
-        background-color: {bg_color} !important;
+    .stButton button, button {{
+        background-color: {button_bg} !important;
+        color: {text_color} !important;
+        font-weight: bold;
+        border: none;
+    }}
+    .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {{
+        background-color: {button_bg} !important;
+        color: {text_color} !important;
+    }}
+    .stDataFrame, .data-box {{
+        background-color: {box_bg} !important;
         color: {text_color} !important;
     }}
     table {{
