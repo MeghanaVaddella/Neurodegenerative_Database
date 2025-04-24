@@ -25,26 +25,32 @@ st.markdown("""
 st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
 dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Theme Colors ---
-header_font_color = "#250b0f"
-header_bg = "#442128"         # Dark Plum
-body_bg = "#999189"           # Warm Gray
-button_bg = "#7b6261"         # Soft Rosewood
-box_bg = "#d99d87"            # Muted Mauve
-text_color = "#000000"        # Base text color (unchanged)
+# --- Theme Colors Based on Mode ---
+if dark_mode:
+    header_font_color = "#250b0f"      # Dark font color
+    download_button_bg = "#d99d87"     # Button background
+    page_bg = "#442128"                # Page background
+    search_bar_bg = "#7b6261"          # Search bar
+    table_bg = "#999189"               # Table background
+else:
+    header_font_color = "#000000"
+    download_button_bg = "#A89A91"
+    page_bg = "#7E7278"
+    search_bar_bg = "#A89A91"
+    table_bg = "#C6B0DD"
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
     <style>
     body, .stApp {{
-        background-color: {body_bg};
-        color: {text_color};
+        background-color: {page_bg};
+        color: {header_font_color};
     }}
     .block-container {{
-        background-color: {body_bg} !important;
+        background-color: {page_bg} !important;
     }}
     .header-text {{
-        background-color: {header_bg};
+        background-color: {page_bg};
         padding: 1.2rem;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
@@ -66,31 +72,25 @@ st.markdown(f"""
         margin-bottom: 10px;
     }}
     .stButton button, button {{
-        background-color: {button_bg} !important;
-        color: {text_color} !important;
+        background-color: {download_button_bg} !important;
+        color: {header_font_color} !important;
         font-weight: bold;
         border: none;
     }}
     .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {{
-        background-color: {button_bg} !important;
-        color: {text_color} !important;
+        background-color: {search_bar_bg} !important;
+        color: {header_font_color} !important;
     }}
     .stDataFrame, .data-box {{
-        background-color: {box_bg} !important;
-        color: {text_color} !important;
+        background-color: {table_bg} !important;
+        color: {header_font_color} !important;
     }}
     .css-18e3th9, .css-1d391kg, .css-1v0mbdj, .stTabs, .css-1c7y2kd {{
-        background-color: {body_bg} !important;
-        color: {text_color} !important;
+        background-color: {page_bg} !important;
+        color: {header_font_color} !important;
     }}
     table {{
-        color: {text_color} !important;
-    }}
-    .main-visual-header, .ppi-header, .structure-header {{
-        font-family: 'MADEVoyager', sans-serif;
-        font-size: 36px;
-        color: {header_font_color};
-        margin-bottom: 1rem;
+        color: {header_font_color} !important;
     }}
     </style>
 """, unsafe_allow_html=True)
