@@ -28,15 +28,15 @@ dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 # --- Apply Light/Dark Mode Theme Styling ---
 if dark_mode:
     header_bg = "#2B2D42"        # Dark Header
-    body_bg = "#708090"          # Slate Gray
+    body_bg = "#708090"          # Slate Gray (also used for tabs)
     button_bg = "#D2B48C"        # Tan
     box_bg = "#6F4E37"           # Coffee
     text_color = "#E0B0FF"       # Soft Purple
 else:
-    header_bg = "#504448"        # Page Header Background (from palette)
-    body_bg = "#7E7278"          # App Background + Tabs (from palette)
-    button_bg = "#A89A91"        # Button + Search bar background (from palette)
-    box_bg = "#C6B0DD"           # Data Box (from palette)
+    header_bg = "#504448"        # Page Header Background
+    body_bg = "#7E7278"          # Full Page Background + Tabs
+    button_bg = "#A89A91"        # Button + Search bar
+    box_bg = "#C6B0DD"           # Data Box
     text_color = "#000000"       # Black Font
 
 # --- Inject Unified Custom Styling ---
@@ -85,6 +85,9 @@ st.markdown(f"""
     .stDataFrame, .data-box {{
         background-color: {box_bg} !important;
         color: {text_color} !important;
+    }}
+    .css-1d391kg, .css-18e3th9 {{  /* Tabs + Main container area */
+        background-color: {body_bg} !important;
     }}
     table {{
         color: {text_color} !important;
