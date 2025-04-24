@@ -11,31 +11,34 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Inject Custom Font and CSS from GitHub ---
+# --- Inject MADEVoyager Font + Styling ---
 st.markdown("""
     <style>
     @font-face {
-        font-family: 'GlowingMidnight';
-        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/Glowing%20Midnight%20.ttf') format('truetype');
+        font-family: 'MADEVoyager';
+        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/MADEVoyagerPERSONAL_USE-Bold.otf') format('opentype');
     }
 
     .header-text {
-        font-family: 'GlowingMidnight', cursive;
-        font-size: 60px;
+        font-family: 'MADEVoyager', sans-serif;
+        font-size: 58px;
         text-align: center;
         margin-top: 0.5em;
-        margin-bottom: 0.5em;
-        color: #4A90E2;
+        margin-bottom: 0.3em;
+        color: #2C3E50; /* dark blue */
+        letter-spacing: 2px;
     }
 
-    .dark-mode-toggle {
+    .dark-mode-bar {
+        font-size: 16px;
+        font-family: 'Segoe UI', sans-serif;
         display: flex;
+        justify-content: flex-start;
         align-items: center;
         gap: 0.5rem;
-        font-family: 'GlowingMidnight', cursive;
-        font-size: 18px;
-        margin-top: 0.8rem;
-        margin-left: 1rem;
+        padding-left: 1rem;
+        margin-top: -10px;
+        margin-bottom: 15px;
     }
 
     .stApp {
@@ -44,13 +47,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Top Row: Dark Mode Toggle on the Left ---
-col1, col2 = st.columns([2, 10])
-with col1:
-    st.markdown("<div class='dark-mode-toggle'>🌙 <span>Dark Mode</span></div>", unsafe_allow_html=True)
-    dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
+# --- Header ---
+st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
-# --- Apply Theme Colors Based on Mode ---
+# --- Dark Mode Toggle just above the tab/navigation bar ---
+st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
+dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
+
+# --- Apply Theme Colors ---
 bg_color = "#0e1117" if dark_mode else "#F5F8FA"
 text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
 
@@ -68,9 +72,6 @@ st.markdown(f"""
     }}
     </style>
 """, unsafe_allow_html=True)
-
-# --- Page Header ---
-st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
