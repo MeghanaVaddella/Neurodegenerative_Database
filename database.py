@@ -29,24 +29,20 @@ st.markdown("""
         font-size: 60px;
         text-align: center;
         letter-spacing: 1.5px;
-        margin-bottom: 0.5em;
+        margin-bottom: 0.3em;
     }
 
-    .custom-button {
+    .dark-mode-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .dark-mode-toggle span {
         font-family: 'GlowingMidnight', cursive;
-        background-color: #1E2A38;
-        color: #FAFAFA;
-        border: 2px solid #4A90E2;
-        padding: 10px 20px;
-        border-radius: 12px;
-        font-size: 20px;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .custom-button:hover {
-        background-color: #4A90E2;
-        color: #0e1117;
+        font-size: 18px;
     }
 
     .stApp {
@@ -55,10 +51,19 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Dark Mode Toggle ---
-dark_mode = st.sidebar.toggle("🌙 Dark Mode")
+# --- Header ---
+st.markdown("<div class='poisoned-heart-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
-# --- Theme Colors Based on Mode ---
+# --- Dark Mode Toggle (Inline) ---
+col1, col2 = st.columns([0.5, 2])
+with col1:
+    st.write("")
+with col2:
+    st.markdown("<div class='dark-mode-toggle'><span>Dark Mode</span>", unsafe_allow_html=True)
+    dark_mode = st.toggle("", key="darkmode_toggle")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# --- Apply Theme Colors ---
 bg_color = "#0e1117" if dark_mode else "#F0F4F8"
 text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
 header_color = "#4A90E2" if dark_mode else "#2C3E50"
@@ -75,15 +80,39 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Header ---
-st.markdown("<div class='poisoned-heart-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
+# --- Navigation and Filters (Inline under header) ---
+st.markdown("### 🔍 Navigate & Filter")
 
-# --- Example Button (Styled with Glowing Midnight) ---
-st.markdown("""
-    <div style='text-align:center; margin-top:30px;'>
-        <button class='custom-button'>Explore Network</button>
-    </div>
-""", unsafe_allow_html=True)
+nav_col, disease_col, data_col = st.columns([1.2, 1.5, 2])
+
+with nav_col:
+    page = st.radio("Go to", ["🏠 Home", "🧬 PPI Data", "🧠 Pathways", "📊 Expression"], label_visibility="collapsed")
+
+with disease_col:
+    selected_disease = st.selectbox("🧪 Select Disease", ["Alzheimer's", "Parkinson's", "ALS", "Huntington's"])
+
+with data_col:
+    data_type = st.multiselect("📂 Data Type", ["Gene Expression", "PPI", "Pathway", "Drug Target"])
+
+st.markdown("---")
+
+# --- Page Content Logic ---
+if page == "🏠 Home":
+    st.subheader("Welcome")
+    st.write("Welcome to NEUROGEN PPI — your gateway to neurodegenerative network insights.")
+
+elif page == "🧬 PPI Data":
+    st.subheader("Protein-Protein Interaction Data")
+    st.write(f"Showing PPI data for **{selected_disease}**.")
+    st.write(f"Data Types selected: {', '.join(data_type) if data_type else 'None'}")
+
+elif page == "🧠 Pathways":
+    st.subheader("Pathway Analysis")
+    st.write(f"Exploring pathways related to **{selected_disease}**.")
+
+elif page == "📊 Expression":
+    st.subheader("Gene Expression Insights")
+    st.write(f"Gene expression data filtered by: **{selected_disease}**, {', '.join(data_type) if data_type else 'None'}")
 
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
