@@ -7,41 +7,32 @@ import streamlit.components.v1 as components
 import py3Dmol
 import matplotlib.pyplot as plt
 import numpy as np
-import base64
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Load and encode fonts ---
-def load_font_base64(font_path):
-    with open(font_path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
-
-# ✅ Corrected paths
-poisoned_heart_base64 = load_font_base64("/mnt/data/The Poisoned Heart.otf")
-glowing_midnight_base64 = load_font_base64("/mnt/data/glowing_midnight_assets/Glowing Midnight .ttf")
-
-# --- Inject Fonts and Styles ---
-st.markdown(f"""
+# --- Inject Fonts and Styling via GitHub URLs ---
+st.markdown("""
     <style>
-    @font-face {{
+    @font-face {
         font-family: 'PoisonedHeart';
-        src: url(data:font/otf;base64,{poisoned_heart_base64}) format('opentype');
-    }}
-    @font-face {{
-        font-family: 'GlowingMidnight';
-        src: url(data:font/ttf;base64,{glowing_midnight_base64}) format('truetype');
-    }}
+        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/The%20Poisoned%20Heart.otf') format('opentype');
+    }
 
-    .poisoned-heart-header {{
+    @font-face {
+        font-family: 'GlowingMidnight';
+        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/Glowing%20Midnight%20.ttf') format('truetype');
+    }
+
+    .poisoned-heart-header {
         font-family: 'PoisonedHeart', cursive;
         font-size: 60px;
         text-align: center;
         letter-spacing: 1.5px;
         margin-bottom: 0.5em;
-    }}
+    }
 
-    .custom-button {{
+    .custom-button {
         font-family: 'GlowingMidnight', cursive;
         background-color: #1E2A38;
         color: #FAFAFA;
@@ -51,19 +42,23 @@ st.markdown(f"""
         font-size: 20px;
         cursor: pointer;
         transition: all 0.3s ease-in-out;
-    }}
+    }
 
-    .custom-button:hover {{
+    .custom-button:hover {
         background-color: #4A90E2;
         color: #0e1117;
-    }}
+    }
+
+    .stApp {
+        transition: background-color 0.3s ease;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # --- Dark Mode Toggle ---
 dark_mode = st.sidebar.toggle("🌙 Dark Mode")
 
-# --- Dynamic Theme Styling ---
+# --- Theme Colors Based on Mode ---
 bg_color = "#0e1117" if dark_mode else "#F0F4F8"
 text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
 header_color = "#4A90E2" if dark_mode else "#2C3E50"
@@ -83,7 +78,7 @@ st.markdown(f"""
 # --- Header ---
 st.markdown("<div class='poisoned-heart-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
-# --- HTML Button Styled Example ---
+# --- Example Button (Styled with Glowing Midnight) ---
 st.markdown("""
     <div style='text-align:center; margin-top:30px;'>
         <button class='custom-button'>Explore Network</button>
