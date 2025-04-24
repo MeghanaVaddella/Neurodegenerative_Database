@@ -8,7 +8,7 @@ import py3Dmol
 import matplotlib.pyplot as plt
 import numpy as np
 
-# --- PAGE CONFIG ---
+# --- PAGE CONFIG --- 
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
 # --- Inject MADEVoyager Font ---
@@ -25,21 +25,15 @@ st.markdown("""
 st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
 dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Apply Light/Dark Mode Theme Styling ---
-if dark_mode:
-    header_bg = "#2B2D42"        # Dark Header
-    body_bg = "#708090"          # Unified background (also for sidebar and tabs)
-    button_bg = "#D2B48C"        # Tan
-    box_bg = "#6F4E37"           # Coffee
-    text_color = "#E0B0FF"       # Light purple
-else:
-    header_bg = "#504448"        # Header Background
-    body_bg = "#7E7278"          # Full App Background (Unified)
-    button_bg = "#A89A91"        # Button background
-    box_bg = "#C6B0DD"           # Box background
-    text_color = "#000000"       # Black Font
+# --- Theme Colors ---
+header_font_color = "#250b0f"
+header_bg = "#442128"         # Dark Plum
+body_bg = "#999189"           # Warm Gray
+button_bg = "#7b6261"         # Soft Rosewood
+box_bg = "#d99d87"            # Muted Mauve
+text_color = "#000000"        # Base text color (unchanged)
 
-# --- Inject Unified Custom Styling ---
+# --- Inject Custom Unified Styling ---
 st.markdown(f"""
     <style>
     body, .stApp {{
@@ -52,13 +46,12 @@ st.markdown(f"""
     .header-text {{
         background-color: {header_bg};
         padding: 1.2rem;
-        border-radius: 0;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: {text_color};
+        color: {header_font_color};
         letter-spacing: 2px;
     }}
     .dark-mode-bar {{
@@ -92,6 +85,12 @@ st.markdown(f"""
     }}
     table {{
         color: {text_color} !important;
+    }}
+    .main-visual-header, .ppi-header, .structure-header {{
+        font-family: 'MADEVoyager', sans-serif;
+        font-size: 36px;
+        color: {header_font_color};
+        margin-bottom: 1rem;
     }}
     </style>
 """, unsafe_allow_html=True)
