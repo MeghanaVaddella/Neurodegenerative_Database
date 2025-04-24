@@ -11,7 +11,7 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Google Fonts: Monoton ---
+# --- Google Fonts: Monoton Header ---
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">
     <style>
@@ -22,43 +22,79 @@ st.markdown("""
         margin-top: 0;
         margin-bottom: 0.5em;
         letter-spacing: 2px;
-        color: #4A90E2;
+    }
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 1em;
+        padding-left: 1rem;
     }
     .toggle-label {
         font-size: 16px;
-        margin-right: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER + DARK MODE TOGGLE ---
+# --- Dark Mode Toggle on the Left ---
 col1, col2, col3 = st.columns([1, 2, 1])
 
 with col1:
-    st.write("")
+    st.markdown("<div class='toggle-container'><span class='toggle-label'>Dark Mode</span>", unsafe_allow_html=True)
+    dark_mode = st.toggle("", key="darkmode_toggle")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with col2:
     st.markdown("<div class='monoton-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
 with col3:
-    st.markdown("<div style='display: flex; align-items: center; justify-content: flex-end;'>"
-                "<span class='toggle-label'>Dark Mode</span>", unsafe_allow_html=True)
-    dark_mode = st.toggle("", key="darkmode_toggle")
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.write("")
 
-# --- DARK MODE STYLING ---
+# --- Apply Custom Theming ---
 if dark_mode:
+    # DARK MODE: Midnight Drama Palette
     st.markdown("""
         <style>
         body, .stApp {
             background-color: #0e1117;
             color: #FAFAFA;
         }
-        .css-18e3th9, .css-1d391kg {
-            background-color: #0e1117;
+        .css-18e3th9, .css-1d391kg, .block-container {
+            background-color: #0e1117 !important;
+        }
+        .monoton-header {
+            color: #4A90E2 !important;
+        }
+        .stButton>button, .stTextInput>div>input {
+            background-color: #16202A;
+            color: #FAFAFA;
         }
         table {
             color: #FAFAFA !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+else:
+    # LIGHT MODE: Soft Light Blue + Grey
+    st.markdown("""
+        <style>
+        body, .stApp {
+            background-color: #F1F5F9;
+            color: #1F2D3D;
+        }
+        .css-18e3th9, .css-1d391kg, .block-container {
+            background-color: #F1F5F9 !important;
+        }
+        .monoton-header {
+            color: #2C3E50 !important;
+        }
+        .stButton>button, .stTextInput>div>input {
+            background-color: #E0E7EF;
+            color: #1F2D3D;
+        }
+        table {
+            color: #1F2D3D !important;
         }
         </style>
     """, unsafe_allow_html=True)
