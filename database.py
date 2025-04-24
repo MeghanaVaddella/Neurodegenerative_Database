@@ -9,15 +9,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # --- PAGE CONFIG ---
-st.set_page_config(
-    page_title="Protein-Protein Interaction for Neurodegenerative Diseases",
-    layout="wide"
-)
+st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- THEME TOGGLE SWITCH (icon-only button) ---
-dark_mode = st.toggle("", key="darkmode_toggle")
+# --- Google Fonts: Monoton ---
+st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">
+    <style>
+    .monoton-header {
+        font-family: 'Monoton', cursive;
+        font-size: 56px;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 0.5em;
+        letter-spacing: 2px;
+        color: #4A90E2;
+    }
+    .toggle-label {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Inject Dark Mode CSS
+# --- HEADER + DARK MODE TOGGLE ---
+col1, col2, col3 = st.columns([1, 2, 1])
+
+with col1:
+    st.write("")
+
+with col2:
+    st.markdown("<div class='monoton-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div style='display: flex; align-items: center; justify-content: flex-end;'>"
+                "<span class='toggle-label'>Dark Mode</span>", unsafe_allow_html=True)
+    dark_mode = st.toggle("", key="darkmode_toggle")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# --- DARK MODE STYLING ---
 if dark_mode:
     st.markdown("""
         <style>
