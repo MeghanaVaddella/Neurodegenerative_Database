@@ -7,97 +7,100 @@ import streamlit.components.v1 as components
 import py3Dmol
 import matplotlib.pyplot as plt
 import numpy as np
+import base64
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Google Fonts: Monoton Header ---
-st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">
+# --- Load and encode fonts ---
+def load_font_base64(font_path):
+    with open(font_path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+poisoned_heart_base64 = load_font_base64("/mnt/data/poisoned_heart_font/The Poisoned Heart.otf")
+glowing_midnight_base64 = load_font_base64("/mnt/data/glowing_midnight_assets/Glowing Midnight .ttf")
+
+# --- Inject Fonts and Styles ---
+st.markdown(f"""
     <style>
-    .monoton-header {
-        font-family: 'Monoton', cursive;
-        font-size: 56px;
+    @font-face {{
+        font-family: 'PoisonedHeart';
+        src: url(data:font/otf;base64,{poisoned_heart_base64}) format('opentype');
+    }}
+    @font-face {{
+        font-family: 'GlowingMidnight';
+        src: url(data:font/ttf;base64,{glowing_midnight_base64}) format('truetype');
+    }}
+
+    .poisoned-heart-header {{
+        font-family: 'PoisonedHeart', cursive;
+        font-size: 60px;
         text-align: center;
-        margin-top: 0;
+        letter-spacing: 1.5px;
         margin-bottom: 0.5em;
-        letter-spacing: 2px;
-    }
-    .toggle-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 1em;
-        padding-left: 1rem;
-    }
-    .toggle-label {
-        font-size: 16px;
-    }
+    }}
+
+    .custom-button {{
+        font-family: 'GlowingMidnight', cursive;
+        background-color: #1E2A38;
+        color: #FAFAFA;
+        border: 2px solid #4A90E2;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }}
+
+    .custom-button:hover {{
+        background-color: #4A90E2;
+        color: #0e1117;
+    }}
+
+    .stApp {{
+        transition: background-color 0.3s ease;
+    }}
     </style>
 """, unsafe_allow_html=True)
 
-# --- Dark Mode Toggle on the Left ---
-col1, col2, col3 = st.columns([1, 2, 1])
+# --- Dark Mode Toggle ---
+dark_mode = st.sidebar.toggle("🌙 Dark Mode")
 
-with col1:
-    st.markdown("<div class='toggle-container'><span class='toggle-label'>Dark Mode</span>", unsafe_allow_html=True)
-    dark_mode = st.toggle("", key="darkmode_toggle")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col2:
-    st.markdown("<div class='monoton-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
-
-with col3:
-    st.write("")
-
-# --- Apply Custom Theming ---
+# --- Apply theme colors ---
 if dark_mode:
-    # DARK MODE: Midnight Drama Palette
-    st.markdown("""
-        <style>
-        body, .stApp {
-            background-color: #0e1117;
-            color: #FAFAFA;
-        }
-        .css-18e3th9, .css-1d391kg, .block-container {
-            background-color: #0e1117 !important;
-        }
-        .monoton-header {
-            color: #4A90E2 !important;
-        }
-        .stButton>button, .stTextInput>div>input {
-            background-color: #16202A;
-            color: #FAFAFA;
-        }
-        table {
-            color: #FAFAFA !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
+    bg_color = "#0e1117"
+    text_color = "#FAFAFA"
+    header_color = "#4A90E2"
 else:
-    # LIGHT MODE: Soft Light Blue + Grey
-    st.markdown("""
-        <style>
-        body, .stApp {
-            background-color: #F1F5F9;
-            color: #1F2D3D;
-        }
-        .css-18e3th9, .css-1d391kg, .block-container {
-            background-color: #F1F5F9 !important;
-        }
-        .monoton-header {
-            color: #2C3E50 !important;
-        }
-        .stButton>button, .stTextInput>div>input {
-            background-color: #E0E7EF;
-            color: #1F2D3D;
-        }
-        table {
-            color: #1F2D3D !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    bg_color = "#F0F4F8"
+    text_color = "#1F2D3D"
+    header_color = "#2C3E50"
+
+st.markdown(f"""
+    <style>
+    .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
+    .poisoned-heart-header {{
+        color: {header_color};
+    }}
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Display Custom Header ---
+st.markdown("<div class='poisoned-heart-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
+
+# --- Simulated Button Example ---
+if st.button("Load PPI Data", key="load_button"):
+    st.success("Data loading initiated!")
+
+# --- Custom HTML Button Example ---
+st.markdown("""
+    <div style='text-align:center; margin-top:30px;'>
+        <button class='custom-button'>Explore Network</button>
+    </div>
+""", unsafe_allow_html=True)
 
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
