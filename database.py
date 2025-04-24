@@ -28,9 +28,9 @@ dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 # --- Theme Colors ---
 if dark_mode:
     # Dark theme colors from image palette
-    header_bg = "#442128"
     body_bg = "#442128"          # Full Page Background
-    button_bg = "#d99d87"        # Download Button Background
+    header_bg = "#999189"        # Header Background (Front Page)
+    button_bg = "#7b6261"        # Download Button Background
     box_bg = "#999189"           # Table/Data Box Background
     text_color = "#250b0f"       # Header and Font Color
     input_bg = "#7b6261"         # Search/Input Background
