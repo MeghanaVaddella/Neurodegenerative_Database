@@ -27,7 +27,7 @@ dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
 # --- Theme Colors ---
 if dark_mode:
-    # Dark theme colors from image palette
+    # Dark theme colors from flower-inspired palette
     body_bg = "#442128"          # Full Page Background
     header_bg = "#999189"        # Header Background (Front Page)
     button_bg = "#7b6261"        # Download Button Background
@@ -35,14 +35,13 @@ if dark_mode:
     text_color = "#250b0f"       # Header and Font Color
     input_bg = "#7b6261"         # Search/Input Background
 else:
-   # Light theme using new aesthetic palette
-header_bg = "#716361"          # Granite Gray
-body_bg = "#B8B3B1"            # Philippine Silver
-button_bg = "#5D4459"          # Eggplant
-box_bg = "#EAE7E5"             # Light neutral for data tables
-text_color = "#362F32"         # Dark Charcoal
-input_bg = "#5D4459"           # Eggplant (consistent with buttons)
-
+    # Light theme using elegant palette from swatch image
+    header_bg = "#716361"        # Granite Gray
+    body_bg = "#B8B3B1"          # Philippine Silver
+    button_bg = "#5D4459"        # Eggplant
+    box_bg = "#EAE7E5"           # Light for data tables
+    text_color = "#362F32"       # Dark Charcoal
+    input_bg = "#5D4459"         # Eggplant (same as button)
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
