@@ -8,7 +8,7 @@ import py3Dmol
 import matplotlib.pyplot as plt
 import numpy as np
 
-# --- PAGE CONFIG --- 
+# --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
 # --- Inject MADEVoyager Font ---
@@ -25,39 +25,43 @@ st.markdown("""
 st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
 dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Theme Colors Based on Mode ---
+# --- Theme Colors ---
 if dark_mode:
-    header_font_color = "#250b0f"      # Dark font color
-    download_button_bg = "#d99d87"     # Button background
-    page_bg = "#442128"                # Page background
-    search_bar_bg = "#7b6261"          # Search bar
-    table_bg = "#999189"               # Table background
+    # Dark theme colors from image palette
+    header_bg = "#442128"
+    body_bg = "#442128"          # Full Page Background
+    button_bg = "#d99d87"        # Download Button Background
+    box_bg = "#999189"           # Table/Data Box Background
+    text_color = "#250b0f"       # Header and Font Color
+    input_bg = "#7b6261"         # Search/Input Background
 else:
-    header_font_color = "#000000"
-    download_button_bg = "#A89A91"
-    page_bg = "#7E7278"
-    search_bar_bg = "#A89A91"
-    table_bg = "#C6B0DD"
+    # Light theme (unchanged)
+    header_bg = "#504448"
+    body_bg = "#7E7278"
+    button_bg = "#A89A91"
+    box_bg = "#C6B0DD"
+    text_color = "#000000"
+    input_bg = "#A89A91"
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
     <style>
     body, .stApp {{
-        background-color: {page_bg};
-        color: {header_font_color};
+        background-color: {body_bg};
+        color: {text_color};
     }}
     .block-container {{
-        background-color: {page_bg} !important;
+        background-color: {body_bg} !important;
     }}
     .header-text {{
-        background-color: {page_bg};
+        background-color: {header_bg};
         padding: 1.2rem;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: {header_font_color};
+        color: {text_color};
         letter-spacing: 2px;
     }}
     .dark-mode-bar {{
@@ -72,25 +76,25 @@ st.markdown(f"""
         margin-bottom: 10px;
     }}
     .stButton button, button {{
-        background-color: {download_button_bg} !important;
-        color: {header_font_color} !important;
+        background-color: {button_bg} !important;
+        color: {text_color} !important;
         font-weight: bold;
         border: none;
     }}
     .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {{
-        background-color: {search_bar_bg} !important;
-        color: {header_font_color} !important;
+        background-color: {input_bg} !important;
+        color: {text_color} !important;
     }}
     .stDataFrame, .data-box {{
-        background-color: {table_bg} !important;
-        color: {header_font_color} !important;
+        background-color: {box_bg} !important;
+        color: {text_color} !important;
     }}
     .css-18e3th9, .css-1d391kg, .css-1v0mbdj, .stTabs, .css-1c7y2kd {{
-        background-color: {page_bg} !important;
-        color: {header_font_color} !important;
+        background-color: {body_bg} !important;
+        color: {text_color} !important;
     }}
     table {{
-        color: {header_font_color} !important;
+        color: {text_color} !important;
     }}
     </style>
 """, unsafe_allow_html=True)
