@@ -11,7 +11,7 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Inject MADEVoyager Font + Custom Styling ---
+# --- Inject MADEVoyager Font + Styling ---
 st.markdown("""
     <style>
     @font-face {
@@ -25,56 +25,63 @@ st.markdown("""
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: #2C3E50;
-        letter-spacing: 2px;
+        background-color: #504448; /* Header background */
+        color: black;
+        padding: 0.3em;
+        border-radius: 0.5em;
     }
 
-    .dark-toggle-bar {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding-left: 1rem;
-        margin-top: -40px;
-        margin-bottom: 10px;
-    }
-
-    .dark-toggle-label {
+    .dark-mode-bar {
         font-size: 16px;
         font-family: 'Segoe UI', sans-serif;
-        margin-right: 0.5rem;
-        color: inherit;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+        padding-left: 1rem;
+        margin-top: -10px;
+        margin-bottom: 10px;
     }
 
     .stApp {
         transition: background-color 0.3s ease;
     }
+
+    button, .stButton > button {
+        background-color: #A89A91 !important; /* Button background */
+        color: black !important;
+        font-weight: bold;
+    }
+
+    .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {
+        background-color: #C6B0DD !important; /* Box/Container color */
+        color: black !important;
+    }
+
+    .block-container {
+        padding-top: 0rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# --- Header ---
-st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
+# --- Dark Mode Toggle ---
+st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
+dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Dark Mode Toggle Left of Tab Bar ---
-col1, col2 = st.columns([0.05, 0.95])
-with col1:
-    st.markdown("<div class='dark-toggle-bar'><span class='dark-toggle-label'>🌙</span></div>", unsafe_allow_html=True)
-    dark_mode = st.toggle(" ", key="darkmode_toggle", label_visibility="collapsed")
-
-# --- Color Palettes ---
+# --- Apply Light/Dark Theme Colors ---
 if dark_mode:
     bg_color = "#2B2D42"  # Space Cadet
     secondary_color = "#708090"  # Slate Gray
-    accent_color = "#D2B48C"  # Tan
-    highlight_color = "#6F4E37"  # Coffee
-    text_color = "#E0B0FF"  # Caput Mortuum-like light
+    button_color = "#D2B48C"  # Tan
+    box_color = "#6F4E37"  # Coffee
+    text_color = "#E0B0FF"  # Caput Mortuum-like
 else:
-    bg_color = "#F5F8FA"
-    secondary_color = "#DCE3EA"
-    accent_color = "#EDE6DB"
-    highlight_color = "#CBBFBB"
-    text_color = "#1F2D3D"
+    bg_color = "#7E7278"       # App Background (Muted Mauve)
+    secondary_color = "#504448"  # Header Background (Warm Slate)
+    button_color = "#A89A91"     # Button Background (Dusty Beige)
+    box_color = "#C6B0DD"        # Box Color (Soft Lavender)
+    text_color = "#000000"       # Text (Black)
 
-# --- Apply Theme Styles ---
 st.markdown(f"""
     <style>
     body, .stApp {{
@@ -83,21 +90,16 @@ st.markdown(f"""
     }}
     .css-18e3th9, .css-1d391kg, .block-container {{
         background-color: {bg_color} !important;
-    }}
-    .stButton>button {{
-        background-color: {accent_color};
-        color: {text_color};
-        border-radius: 0.5rem;
-    }}
-    .stSelectbox>div>div {{
-        background-color: {secondary_color};
-        color: {text_color};
+        color: {text_color} !important;
     }}
     table {{
         color: {text_color} !important;
     }}
     </style>
 """, unsafe_allow_html=True)
+
+# --- Header ---
+st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
 
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
