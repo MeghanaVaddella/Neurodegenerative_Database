@@ -8,77 +8,50 @@ import py3Dmol
 import matplotlib.pyplot as plt
 import numpy as np
 
+import streamlit as st
+
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Inject Fonts and Styling via GitHub URLs ---
-st.markdown("""
-    <style>
-    @font-face {
-        font-family: 'PoisonedHeart';
-        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/The%20Poisoned%20Heart.otf') format('opentype');
-    }
-
-    @font-face {
-        font-family: 'GlowingMidnight';
-        src: url('https://raw.githubusercontent.com/MeghanaVaddella/Neurodegenerative_Database/main/Glowing%20Midnight%20.ttf') format('truetype');
-    }
-
-    .poisoned-heart-header {
-        font-family: 'PoisonedHeart', cursive;
-        font-size: 60px;
-        text-align: center;
-        letter-spacing: 1.5px;
-        margin-bottom: 0.3em;
-    }
-
-    .dark-mode-toggle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .dark-mode-toggle span {
-        font-family: 'GlowingMidnight', cursive;
-        font-size: 18px;
-    }
-
-    .stApp {
-        transition: background-color 0.3s ease;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# --- Header ---
-st.markdown("<div class='poisoned-heart-header'>NEUROGEN PPI</div>", unsafe_allow_html=True)
-
-# --- Dark Mode Toggle (Inline) ---
-col1, col2 = st.columns([0.5, 2])
+# --- Dark Mode Toggle (Top-Left) ---
+col1, col2 = st.columns([1, 20])  # wide right column, small left column
 with col1:
-    st.write("")
-with col2:
-    st.markdown("<div class='dark-mode-toggle'><span>Dark Mode</span>", unsafe_allow_html=True)
-    dark_mode = st.toggle("", key="darkmode_toggle")
-    st.markdown("</div>", unsafe_allow_html=True)
+    dark_mode = st.toggle("🌙Dark Mode", key="darkmode_toggle", label_visibility="collapsed")
 
-# --- Apply Theme Colors ---
-bg_color = "#0e1117" if dark_mode else "#F0F4F8"
-text_color = "#FAFAFA" if dark_mode else "#1F2D3D"
-header_color = "#4A90E2" if dark_mode else "#2C3E50"
+# --- Inject Dark Mode CSS ---
+if dark_mode:
+    st.markdown("""
+        <style>
+        body, .stApp {
+            background-color: #0e1117;
+            color: #FAFAFA;
+        }
+        .css-18e3th9, .css-1d391kg, .block-container {
+            background-color: #0e1117;
+        }
+        table {
+            color: #FAFAFA !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        body, .stApp {
+            background-color: #F5F8FA;
+            color: #1F2D3D;
+        }
+        .css-18e3th9, .css-1d391kg, .block-container {
+            background-color: #F5F8FA;
+        }
+        table {
+            color: #1F2D3D !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-st.markdown(f"""
-    <style>
-    .stApp {{
-        background-color: {bg_color};
-        color: {text_color};
-    }}
-    .poisoned-heart-header {{
-        color: {header_color};
-    }}
-    </style>
-""", unsafe_allow_html=True)
+# --- Page Header (optional) ---
+st.markdown("<h1 style='text-align:center;'>NEUROGEN PPI</h1>", unsafe_allow_html=True)
 
 # ---- LOAD DATA FUNCTIONS ----
 @st.cache_data(show_spinner=False)
