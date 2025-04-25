@@ -27,21 +27,25 @@ dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
 # --- Theme Colors ---
 if dark_mode:
-    # Dark theme colors from flower-inspired palette
-    body_bg = "#442128"          # Full Page Background
-    header_bg = "#999189"        # Header Background (Front Page)
-    button_bg = "#7b6261"        # Download Button Background
-    box_bg = "#999189"           # Table/Data Box Background
-    text_color = "#250b0f"       # Header and Font Color
-    input_bg = "#7b6261"         # Search/Input Background
+    # Updated Dark theme colors based on your palette
+    body_bg = "#B8B3B1"            # Full Page Background (Philippine Silver)
+    header_bg = "#7A817A"          # Header Background (Granite Gray)
+    button_bg = "#555D50"          # Download Button Background (Ebony)
+    box_bg = "#7A817A"             # Table/Data Box Background (Granite Gray)
+    text_color = "#383732"         # Font Color for Page Header (Dark Charcoal)
+    input_bg = "#555D50"           # Inputs Background (Ebony)
+    main_heading_color = "#64504A" # Main Headings (Umber)
+    button_title_color = "#504349" # Download Button Titles (Eggplant)
 else:
-    # Light theme using elegant palette from swatch image
-    header_bg = "#716361"        # Granite Gray
-    body_bg = "#B8B3B1"          # Philippine Silver
-    button_bg = "#5D4459"        # Eggplant
-    box_bg = "#EAE7E5"           # Light for data tables
-    text_color = "#362F32"       # Dark Charcoal
-    input_bg = "#5D4459"         # Eggplant (same as button)
+    # Light theme colors
+    header_bg = "#716361"          # Granite Gray
+    body_bg = "#B8B3B1"            # Philippine Silver
+    button_bg = "#5D4459"          # Eggplant
+    box_bg = "#EAE7E5"              # Light for data tables
+    text_color = "#362F32"          # Dark Charcoal
+    input_bg = "#5D4459"            # Eggplant (same as button)
+    main_heading_color = "#362F32"  # Darker heading color for light mode
+    button_title_color = "#FFFFFF"  # White text for button in light mode
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
@@ -77,17 +81,22 @@ st.markdown(f"""
     }}
     .stButton button, button {{
         background-color: {button_bg} !important;
-        color: {text_color} !important;
+        color: {button_title_color} !important; /* Button title color */
         font-weight: bold;
         border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
     }}
     .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {{
         background-color: {input_bg} !important;
         color: {text_color} !important;
+        border-radius: 6px;
     }}
     .stDataFrame, .data-box {{
         background-color: {box_bg} !important;
         color: {text_color} !important;
+        border-radius: 10px;
+        padding: 1rem;
     }}
     .css-18e3th9, .css-1d391kg, .css-1v0mbdj, .stTabs, .css-1c7y2kd {{
         background-color: {body_bg} !important;
@@ -95,6 +104,10 @@ st.markdown(f"""
     }}
     table {{
         color: {text_color} !important;
+    }}
+    h1, h2, h3, h4, h5, h6 {{
+        color: {main_heading_color} !important; /* Main heading color */
+        font-family: 'MADEVoyager', sans-serif;
     }}
     </style>
 """, unsafe_allow_html=True)
