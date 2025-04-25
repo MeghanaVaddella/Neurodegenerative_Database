@@ -27,25 +27,23 @@ dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
 
 # --- Theme Colors ---
 if dark_mode:
-    # Updated Dark theme colors based on your palette
     body_bg = "#B8B3B1"            # Full Page Background (Philippine Silver)
     header_bg = "#7A817A"          # Header Background (Granite Gray)
-    button_bg = "#555D50"          # Download Button Background (Ebony)
+    button_bg = "#64504A"          # Download Button Background (Umber)
     box_bg = "#7A817A"             # Table/Data Box Background (Granite Gray)
     text_color = "#383732"         # Font Color for Page Header (Dark Charcoal)
     input_bg = "#555D50"           # Inputs Background (Ebony)
     main_heading_color = "#64504A" # Main Headings (Umber)
-    button_title_color = "#504349" # Download Button Titles (Eggplant)
+    button_title_color = "#7A817A" # Button title text (Granite Gray)
 else:
-    # Light theme colors
     header_bg = "#716361"          # Granite Gray
     body_bg = "#B8B3B1"            # Philippine Silver
-    button_bg = "#5D4459"          # Eggplant
-    box_bg = "#EAE7E5"              # Light for data tables
-    text_color = "#362F32"          # Dark Charcoal
-    input_bg = "#5D4459"            # Eggplant (same as button)
-    main_heading_color = "#362F32"  # Darker heading color for light mode
-    button_title_color = "#FFFFFF"  # White text for button in light mode
+    button_bg = "#64504A"          # Still Umber for consistency
+    box_bg = "#EAE7E5"             # Light for data tables
+    text_color = "#362F32"         # Dark Charcoal
+    input_bg = "#5D4459"           # Eggplant (for inputs)
+    main_heading_color = "#362F32" # Dark headings for light mode
+    button_title_color = "#716361" # Gray button text in light mode too
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
@@ -98,9 +96,16 @@ st.markdown(f"""
         border-radius: 10px;
         padding: 1rem;
     }}
-    .css-18e3th9, .css-1d391kg, .css-1v0mbdj, .stTabs, .css-1c7y2kd {{
+    .stTabs > div > div {{
+        background-color: {body_bg} !important; /* Tabs bar blending */
+        color: {text_color} !important;
+        border: none !important;
+    }}
+    .stTabs button {{
         background-color: {body_bg} !important;
         color: {text_color} !important;
+        border: none;
+        font-weight: bold;
     }}
     table {{
         color: {text_color} !important;
