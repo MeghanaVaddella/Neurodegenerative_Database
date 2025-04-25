@@ -21,29 +21,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Dark Mode Toggle ---
-st.markdown("<div class='dark-mode-bar'>🌙 Dark Mode</div>", unsafe_allow_html=True)
-dark_mode = st.toggle("", key="darkmode_toggle", label_visibility="collapsed")
-
 # --- Theme Colors ---
-if dark_mode:
-    body_bg = "#B8B3B1"            # Full Page Background (Philippine Silver)
-    header_bg = "#7A817A"          # Header Background (Granite Gray)
-    button_bg = "#64504A"          # Download Button Background (Umber)
-    box_bg = "#7A817A"             # Table/Data Box Background (Granite Gray)
-    text_color = "#383732"         # Font Color for Page Header (Dark Charcoal)
-    input_bg = "#555D50"           # Inputs Background (Ebony)
-    main_heading_color = "#64504A" # Main Headings (Umber)
-    button_title_color = "#7A817A" # Button title text (Granite Gray)
-else:
-    header_bg = "#716361"          # Granite Gray
-    body_bg = "#B8B3B1"            # Philippine Silver
-    button_bg = "#64504A"          # Still Umber for consistency
-    box_bg = "#EAE7E5"             # Light for data tables
-    text_color = "#362F32"         # Dark Charcoal
-    input_bg = "#5D4459"           # Eggplant (for inputs)
-    main_heading_color = "#362F32" # Dark headings for light mode
-    button_title_color = "#716361" # Gray button text in light mode too
+body_bg = "#7F3433"           # Full Page Background (from flower palette)
+text_color = "#A58C8C"        # General Text Color (top swatch from flower palette)
+button_bg = "#CEBBAF"         # Dark Vanilla for Download Button
+button_text_color = "#3B1C1E" # Very dark brown (for button text)
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
@@ -56,7 +38,7 @@ st.markdown(f"""
         background-color: {body_bg} !important;
     }}
     .header-text {{
-        background-color: {header_bg};
+        background-color: {body_bg};
         padding: 1.2rem;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
@@ -79,25 +61,27 @@ st.markdown(f"""
     }}
     .stButton button, button {{
         background-color: {button_bg} !important;
-        color: {button_title_color} !important; /* Button title color */
+        color: {button_text_color} !important;
         font-weight: bold;
         border: none;
         border-radius: 8px;
         padding: 0.5rem 1rem;
     }}
     .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {{
-        background-color: {input_bg} !important;
+        background-color: {body_bg} !important;
         color: {text_color} !important;
         border-radius: 6px;
+        border: 1px solid {text_color};
     }}
     .stDataFrame, .data-box {{
-        background-color: {box_bg} !important;
+        background-color: {body_bg} !important;
         color: {text_color} !important;
         border-radius: 10px;
         padding: 1rem;
+        border: 1px solid {text_color};
     }}
     .stTabs > div > div {{
-        background-color: {body_bg} !important; /* Tabs bar blending */
+        background-color: {body_bg} !important;
         color: {text_color} !important;
         border: none !important;
     }}
@@ -111,7 +95,7 @@ st.markdown(f"""
         color: {text_color} !important;
     }}
     h1, h2, h3, h4, h5, h6 {{
-        color: {main_heading_color} !important; /* Main heading color */
+        color: {text_color} !important;
         font-family: 'MADEVoyager', sans-serif;
     }}
     </style>
