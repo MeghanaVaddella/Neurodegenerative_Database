@@ -21,43 +21,39 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Theme Colors ---
-body_bg = "#7F3433"           # Full Page Background (from flower palette)
-text_color = "#A58C8C"        # General Text Color (top swatch from flower palette)
-button_bg = "#CEBBAF"         # Dark Vanilla for Download Button
-button_text_color = "#3B1C1E" # Very dark brown (for button text)
+# --- Theme Colors (Dark Mode Palette) ---
+body_bg = "#C4D8E2"            # Columbia Blue - Full Background and Navbar
+header_bg = "#3B5875"          # Police Blue - Header Background
+header_text_color = "#C4AEAD"  # Silver Pink - "NEUROGEN PPI" title
+general_text_color = "#001C3D" # Maastricht Blue - General Text
+button_bg = "#36454F"          # Charcoal - Download Button background
+button_text_color = "#DBE9F4"  # Azureish White - Button text
+table_bg = "#36454F"           # Charcoal - Table background
+table_border_color = "#5D8AA8" # Rackley - Table border
+search_bg = "#A7C7E7"          # Pastel Blue - Search bar background
+remaining_bg = "#8BA8B7"       # Pewter Blue - Other areas
 
 # --- Inject Custom Unified Styling ---
 st.markdown(f"""
     <style>
     body, .stApp {{
         background-color: {body_bg};
-        color: {text_color};
+        color: {general_text_color};
     }}
     .block-container {{
         background-color: {body_bg} !important;
     }}
     .header-text {{
-        background-color: {body_bg};
+        background-color: {header_bg};
         padding: 1.2rem;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: {text_color};
+        color: {header_text_color};
         letter-spacing: 2px;
-    }}
-    .dark-mode-bar {{
-        font-size: 16px;
-        font-family: 'Segoe UI', sans-serif;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 0.5rem;
-        padding-left: 1rem;
-        margin-top: -10px;
-        margin-bottom: 10px;
+        border-radius: 12px;
     }}
     .stButton button, button {{
         background-color: {button_bg} !important;
@@ -67,35 +63,42 @@ st.markdown(f"""
         border-radius: 8px;
         padding: 0.5rem 1rem;
     }}
-    .stTextInput, .stSelectbox, .stMultiSelect, .stSlider, .stNumberInput, .stTextArea {{
-        background-color: {body_bg} !important;
-        color: {text_color} !important;
+    .stTextInput > div > input,
+    .stSelectbox > div,
+    .stMultiSelect > div,
+    .stSlider > div,
+    .stNumberInput > div,
+    .stTextArea > div > textarea {{
+        background-color: {search_bg} !important;
+        color: {general_text_color} !important;
+        border: 1px solid {general_text_color} !important;
         border-radius: 6px;
-        border: 1px solid {text_color};
     }}
     .stDataFrame, .data-box {{
-        background-color: {body_bg} !important;
-        color: {text_color} !important;
+        background-color: {table_bg} !important;
+        color: {general_text_color} !important;
         border-radius: 10px;
         padding: 1rem;
-        border: 1px solid {text_color};
+        border: 1px solid {table_border_color};
     }}
     .stTabs > div > div {{
-        background-color: {body_bg} !important;
-        color: {text_color} !important;
+        background-color: {remaining_bg} !important;
+        color: {general_text_color} !important;
         border: none !important;
     }}
     .stTabs button {{
         background-color: {body_bg} !important;
-        color: {text_color} !important;
+        color: {general_text_color} !important;
         border: none;
         font-weight: bold;
     }}
     table {{
-        color: {text_color} !important;
+        color: {general_text_color} !important;
+        background-color: {table_bg} !important;
+        border: 1px solid {table_border_color} !important;
     }}
     h1, h2, h3, h4, h5, h6 {{
-        color: {text_color} !important;
+        color: {general_text_color} !important;
         font-family: 'MADEVoyager', sans-serif;
     }}
     </style>
