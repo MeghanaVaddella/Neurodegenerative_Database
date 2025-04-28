@@ -299,114 +299,114 @@ if not df_3d.empty:
 
 st.markdown("---")
 
-    # AlphaFold-based 3D Viewer using py3Dmol
-    st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
+# AlphaFold-based 3D Viewer using py3Dmol
+st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
 
-    def fetch_alphafold_pdb(uniprot_id):
-        url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.text
+def fetch_alphafold_pdb(uniprot_id):
+    url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.text
+    return None
+
+col3, col4 = st.columns(2)
+with col3:
+    uid1 = st.text_input("Enter UniProt ID for Protein A (AlphaFold)", key="uid1").strip()
+with col4:
+    uid2 = st.text_input("Enter UniProt ID for Protein B (AlphaFold)", key="uid2").strip()
+
+if uid1 and uid2:
+    pdb1 = fetch_alphafold_pdb(uid1)
+    pdb2 = fetch_alphafold_pdb(uid2)
+
+    if pdb1 and pdb2:
+        st.subheader("🧪 AlphaFold 3D Viewer")
+        viewer = py3Dmol.view(width=1000, height=600)
+        viewer.addModel(pdb1, "pdb")
+        viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
+        viewer.addModel(pdb2, "pdb")
+        viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
+        viewer.setBackgroundColor("white")
+        viewer.zoomTo()
+        st.components.v1.html(viewer._make_html(), height=600)
+
+        combined_pdb = f"REMARK   Protein A: {uid1}\n{pdb1}\nREMARK   Protein B: {uid2}\n{pdb2}"
+        st.subheader("💾 Download Combined Structure")
+        st.download_button(
+            label="Download PDB for Chimera",
+            data=combined_pdb,
+            file_name=f"{uid1}_{uid2}_combined.pdb",
+            mime="chemical/x-pdb"
+        )
+    else:
+        st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
+
+st.markdown("---")
+
+# AlphaFold-Multimer FASTA Generator + Custom PDB Upload
+st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
+
+colA, colB = st.columns(2)
+with colA:
+    uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
+with colB:
+    uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
+
+def fetch_sequence(uniprot_id):
+    url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
+    response = requests.get(url)
+    if response.ok:
+        return response.text
+    else:
         return None
 
-    col3, col4 = st.columns(2)
-    with col3:
-        uid1 = st.text_input("Enter UniProt ID for Protein A (AlphaFold)", key="uid1").strip()
-    with col4:
-        uid2 = st.text_input("Enter UniProt ID for Protein B (AlphaFold)", key="uid2").strip()
+if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
+    if uniprot_id1 and uniprot_id2:
+        seq1 = fetch_sequence(uniprot_id1)
+        seq2 = fetch_sequence(uniprot_id2)
+        if seq1 and seq2:
+            combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
+            st.success("FASTA file generated successfully.")
+            st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
+            st.code(combined_fasta)
 
-    if uid1 and uid2:
-        pdb1 = fetch_alphafold_pdb(uid1)
-        pdb2 = fetch_alphafold_pdb(uid2)
+            # Show the Colab link after FASTA is displayed
+            colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
+            st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook](" + colab_link + ")**", unsafe_allow_html=True)
 
-        if pdb1 and pdb2:
-            st.subheader("🧪 AlphaFold 3D Viewer")
-            viewer = py3Dmol.view(width=1000, height=600)
-            viewer.addModel(pdb1, "pdb")
-            viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
-            viewer.addModel(pdb2, "pdb")
-            viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
-            viewer.setBackgroundColor("white")
-            viewer.zoomTo()
-            st.components.v1.html(viewer._make_html(), height=600)
-
-            combined_pdb = f"REMARK   Protein A: {uid1}\n{pdb1}\nREMARK   Protein B: {uid2}\n{pdb2}"
-            st.subheader("💾 Download Combined Structure")
-            st.download_button(
-                label="Download PDB for Chimera",
-                data=combined_pdb,
-                file_name=f"{uid1}_{uid2}_combined.pdb",
-                mime="chemical/x-pdb"
-            )
         else:
-            st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
+            st.error("Error fetching sequences. Please check the UniProt IDs.")
+    else:
+        st.warning("Please enter both UniProt IDs.")
 
-    st.markdown("---")
+st.subheader("📦 Upload Predicted PDB File from AlphaFold")
+pdb_file = st.file_uploader("Upload PDB file", type=["pdb"])
 
-    # AlphaFold-Multimer FASTA Generator + Custom PDB Upload
-    st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
+if pdb_file:
+    pdb_str = pdb_file.read().decode("utf-8")
+    st.success("✅ PDB uploaded. Rendering 3D structure...")
 
-    colA, colB = st.columns(2)
-    with colA:
-        uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
-    with colB:
-        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
+    # Create layout: Viewer (left) | PDB text + Download (right)
+    col_left, col_right = st.columns([2, 1])  # Wider 3D view, narrower text
 
-    def fetch_sequence(uniprot_id):
-        url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
-        response = requests.get(url)
-        if response.ok:
-            return response.text
-        else:
-            return None
+    with col_left:
+        view = py3Dmol.view(width=700, height=500)
+        view.addModel(pdb_str, "pdb")
+        view.setStyle({'cartoon': {'color': 'spectrum'}})  # Rainbow coloring
+        view.setBackgroundColor("white")
+        view.zoomTo()
+        html = view._make_html()
+        st.components.v1.html(html, height=500)
 
-    if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
-        if uniprot_id1 and uniprot_id2:
-            seq1 = fetch_sequence(uniprot_id1)
-            seq2 = fetch_sequence(uniprot_id2)
-            if seq1 and seq2:
-                combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
-                st.success("FASTA file generated successfully.")
-                st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
-                st.code(combined_fasta)
-
-                # Show the Colab link after FASTA is displayed
-                colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
-                st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook](" + colab_link + ")**", unsafe_allow_html=True)
-
-            else:
-                st.error("Error fetching sequences. Please check the UniProt IDs.")
-        else:
-            st.warning("Please enter both UniProt IDs.")
-
-    st.subheader("📦 Upload Predicted PDB File from AlphaFold")
-    pdb_file = st.file_uploader("Upload PDB file", type=["pdb"])
-
-    if pdb_file:
-        pdb_str = pdb_file.read().decode("utf-8")
-        st.success("✅ PDB uploaded. Rendering 3D structure...")
-
-        # Create layout: Viewer (left) | PDB text + Download (right)
-        col_left, col_right = st.columns([2, 1])  # Wider 3D view, narrower text
-
-        with col_left:
-            view = py3Dmol.view(width=700, height=500)
-            view.addModel(pdb_str, "pdb")
-            view.setStyle({'cartoon': {'color': 'spectrum'}})  # Rainbow coloring
-            view.setBackgroundColor("white")
-            view.zoomTo()
-            html = view._make_html()
-            st.components.v1.html(html, height=500)
-
-        with col_right:
-            st.markdown("📄 **PDB File Content:**")
-            st.text_area("Raw PDB Content", value=pdb_str, height=500, key="pdb_display")
-            st.download_button(
-                label="💾 Download PDB Content",
-                data=pdb_str,
-                file_name="uploaded_structure.pdb",
-                mime="chemical/x-pdb"
-            )
+    with col_right:
+        st.markdown("📄 **PDB File Content:**")
+        st.text_area("Raw PDB Content", value=pdb_str, height=500, key="pdb_display")
+        st.download_button(
+            label="💾 Download PDB Content",
+            data=pdb_str,
+            file_name="uploaded_structure.pdb",
+            mime="chemical/x-pdb"
+        )
 
 # ---- GITHUB EDIT TAB ----
 with tabs[4]:
