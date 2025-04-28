@@ -226,187 +226,177 @@ with tabs[1]:
         else:
             st.warning("PPI data is empty.")
 
-# ---- 3D STRUCTURE TAB ----
-with tabs[2]:
-    st.header("3D Structure Data")
-    st.dataframe(df_3d, use_container_width=True, hide_index=True)
-    st.download_button("Download 3D Structure CSV", df_3d.to_csv(index=False), "3D_structure_data.csv", "text/csv")
+# ---- 3D VISUALIZER TAB ----
+with tabs[3]:  # Check if the 3D Visualizer tab is selected
+    st.write("### 3D Protein Structure Visualizer")
 
-    st.subheader("No 3D Structure Data")
-    st.dataframe(no_structure_df, use_container_width=True, hide_index=True)
-    st.download_button("Download No 3D Structure CSV", no_structure_df.to_csv(index=False), "No_3D_Structure.csv", "text/csv")
+    # MolStar Viewer using PDB IDs from your dataset
+    if not df_3d.empty:
+        col1, col2 = st.columns(2)
 
+        with col1:
+            protein_a_options = df_3d['Protein A'].dropna().unique().tolist()
+            selected_protein_a = st.selectbox("🔍 Select Protein A", options=[""] + protein_a_options, key="select_protein_a")
+        with col2:
+            protein_b_options = df_3d['Protein B'].dropna().unique().tolist()
+            selected_protein_b = st.selectbox("🔍 Select Protein B", options=[""] + protein_b_options, key="select_protein_b")
 
-# ---- 3D VISUALIZER TAB ---- with tabs[3]: 
-st.write("### 3D Protein Structure Visualizer")
+        result_col1, result_col2 = st.columns(2)
+        pdb_ids = []
 
-# MolStar Viewer using PDB IDs from your dataset
-if not df_3d.empty:
-    col1, col2 = st.columns(2)
+        if selected_protein_a:
+            protein_a_data = df_3d[df_3d['Protein A'] == selected_protein_a]
+            if not protein_a_data.empty:
+                row = protein_a_data.iloc[0]
+                with result_col1:
+                    st.write(f"**🧬 Protein A:** {row['Protein A']}")
+                    st.write(f"**UniProt ID A:** {row['UniProtID A']}")
 
-    with col1:
-        protein_a_options = df_3d['Protein A'].dropna().unique().tolist()
-        selected_protein_a = st.selectbox("🔍 Select Protein A", options=[""] + protein_a_options, key="select_protein_a")
-    with col2:
-        protein_b_options = df_3d['Protein B'].dropna().unique().tolist()
-        selected_protein_b = st.selectbox("🔍 Select Protein B", options=[""] + protein_b_options, key="select_protein_b")
+                    pdb_ids_a = row['PDB ID A'].split(", ")
+                    if pdb_ids_a[0] != "NA":
+                        pdb_links_a = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_a])
+                        st.markdown(f"🔗 **PDB IDs A:** {pdb_links_a}", unsafe_allow_html=True)
+                        pdb_ids.extend(pdb_ids_a)
+            else:
+                with result_col1:
+                    st.warning("No matching Protein A found.")
 
-    result_col1, result_col2 = st.columns(2)
-    pdb_ids = []
+        if selected_protein_b:
+            protein_b_data = df_3d[df_3d['Protein B'] == selected_protein_b]
+            if not protein_b_data.empty:
+                row = protein_b_data.iloc[0]
+                with result_col2:
+                    st.write(f"**🧬 Protein B:** {row['Protein B']}")
+                    st.write(f"**UniProt ID B:** {row['UniProtID B']}")
 
-    if selected_protein_a:
-        protein_a_data = df_3d[df_3d['Protein A'] == selected_protein_a]
-        if not protein_a_data.empty:
-            row = protein_a_data.iloc[0]
-            with result_col1:
-                st.write(f"**🧬 Protein A:** {row['Protein A']}")
-                st.write(f"**UniProt ID A:** {row['UniProtID A']}")
+                    pdb_ids_b = row['PDB ID B'].split(", ")
+                    if pdb_ids_b[0] != "NA":
+                        pdb_links_b = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_b])
+                        st.markdown(f"🔗 **PDB IDs B:** {pdb_links_b}", unsafe_allow_html=True)
+                        pdb_ids.extend(pdb_ids_b)
+            else:
+                with result_col2:
+                    st.warning("No matching Protein B found.")
 
-                pdb_ids_a = row['PDB ID A'].split(", ")
-                if pdb_ids_a[0] != "NA":
-                    pdb_links_a = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_a])
-                    st.markdown(f"🔗 **PDB IDs A:** {pdb_links_a}", unsafe_allow_html=True)
-                    pdb_ids.extend(pdb_ids_a)
+        st.write("### 🧬 Mol* (MolStar) Viewer")
+        pdb_ids = list(filter(lambda x: x != "NA", pdb_ids))
+
+        if pdb_ids:
+            molstar_url = f"https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
+            st.components.v1.iframe(molstar_url, width=1000, height=600)
         else:
-            with result_col1:
-                st.warning("No matching Protein A found.")
+            st.warning("No valid PDB IDs found for visualization.")
 
-    if selected_protein_b:
-        protein_b_data = df_3d[df_3d['Protein B'] == selected_protein_b]
-        if not protein_b_data.empty:
-            row = protein_b_data.iloc[0]
-            with result_col2:
-                st.write(f"**🧬 Protein B:** {row['Protein B']}")
-                st.write(f"**UniProt ID B:** {row['UniProtID B']}")
+    st.markdown("---")
 
-                pdb_ids_b = row['PDB ID B'].split(", ")
-                if pdb_ids_b[0] != "NA":
-                    pdb_links_b = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_b])
-                    st.markdown(f"🔗 **PDB IDs B:** {pdb_links_b}", unsafe_allow_html=True)
-                    pdb_ids.extend(pdb_ids_b)
-        else:
-            with result_col2:
-                st.warning("No matching Protein B found.")
+    # AlphaFold-based 3D Viewer using py3Dmol
+    st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
 
-    st.write("### 🧬 Mol* (MolStar) Viewer")
-    pdb_ids = list(filter(lambda x: x != "NA", pdb_ids))
-
-    if pdb_ids:
-        molstar_url = f"https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
-        st.components.v1.iframe(molstar_url, width=1000, height=600)
-    else:
-        st.warning("No valid PDB IDs found for visualization.")
-
-st.markdown("---")
-
-# AlphaFold-based 3D Viewer using py3Dmol
-st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
-
-def fetch_alphafold_pdb(uniprot_id):
-    url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.text
-    return None
-
-col3, col4 = st.columns(2)
-with col3:
-    uid1 = st.text_input("Enter UniProt ID for Protein A (AlphaFold)", key="uid1").strip()
-with col4:
-    uid2 = st.text_input("Enter UniProt ID for Protein B (AlphaFold)", key="uid2").strip()
-
-if uid1 and uid2:
-    pdb1 = fetch_alphafold_pdb(uid1)
-    pdb2 = fetch_alphafold_pdb(uid2)
-
-    if pdb1 and pdb2:
-        st.subheader("🧪 AlphaFold 3D Viewer")
-        viewer = py3Dmol.view(width=1000, height=600)
-        viewer.addModel(pdb1, "pdb")
-        viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
-        viewer.addModel(pdb2, "pdb")
-        viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
-        viewer.setBackgroundColor("white")
-        viewer.zoomTo()
-        st.components.v1.html(viewer._make_html(), height=600)
-
-        combined_pdb = f"REMARK   Protein A: {uid1}\n{pdb1}\nREMARK   Protein B: {uid2}\n{pdb2}"
-        st.subheader("💾 Download Combined Structure")
-        st.download_button(
-            label="Download PDB for Chimera",
-            data=combined_pdb,
-            file_name=f"{uid1}_{uid2}_combined.pdb",
-            mime="chemical/x-pdb"
-        )
-    else:
-        st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
-
-st.markdown("---")
-
-# AlphaFold-Multimer FASTA Generator + Custom PDB Upload
-st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
-
-colA, colB = st.columns(2)
-with colA:
-    uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
-with colB:
-    uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
-
-def fetch_sequence(uniprot_id):
-    url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
-    response = requests.get(url)
-    if response.ok:
-        return response.text
-    else:
+    def fetch_alphafold_pdb(uniprot_id):
+        url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.text
         return None
 
-if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
-    if uniprot_id1 and uniprot_id2:
-        seq1 = fetch_sequence(uniprot_id1)
-        seq2 = fetch_sequence(uniprot_id2)
-        if seq1 and seq2:
-            combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
-            st.success("FASTA file generated successfully.")
-            st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
-            st.code(combined_fasta)
+    col3, col4 = st.columns(2)
+    with col3:
+        uid1 = st.text_input("Enter UniProt ID for Protein A (AlphaFold)", key="uid1").strip()
+    with col4:
+        uid2 = st.text_input("Enter UniProt ID for Protein B (AlphaFold)", key="uid2").strip()
 
-            # Show the Colab link after FASTA is displayed
-            colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
-            st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook](" + colab_link + ")**", unsafe_allow_html=True)
+    if uid1 and uid2:
+        pdb1 = fetch_alphafold_pdb(uid1)
+        pdb2 = fetch_alphafold_pdb(uid2)
 
+        if pdb1 and pdb2:
+            st.subheader("🧪 AlphaFold 3D Viewer")
+            viewer = py3Dmol.view(width=1000, height=600)
+            viewer.addModel(pdb1, "pdb")
+            viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
+            viewer.addModel(pdb2, "pdb")
+            viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
+            viewer.setBackgroundColor("white")
+            viewer.zoomTo()
+            st.components.v1.html(viewer._make_html(), height=600)
+
+            combined_pdb = f"REMARK   Protein A: {uid1}\n{pdb1}\nREMARK   Protein B: {uid2}\n{pdb2}"
+            st.subheader("💾 Download Combined Structure")
+            st.download_button(
+                label="Download PDB for Chimera",
+                data=combined_pdb,
+                file_name=f"{uid1}_{uid2}_combined.pdb",
+                mime="chemical/x-pdb"
+            )
         else:
-            st.error("Error fetching sequences. Please check the UniProt IDs.")
-    else:
-        st.warning("Please enter both UniProt IDs.")
+            st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
 
-st.subheader("📦 Upload Predicted PDB File from AlphaFold")
-pdb_file = st.file_uploader("Upload PDB file", type=["pdb"])
+    st.markdown("---")
 
-if pdb_file:
-    pdb_str = pdb_file.read().decode("utf-8")
-    st.success("✅ PDB uploaded. Rendering 3D structure...")
+    # AlphaFold-Multimer FASTA Generator + Custom PDB Upload
+    st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
 
-    # Create layout: Viewer (left) | PDB text + Download (right)
-    col_left, col_right = st.columns([2, 1])  # Wider 3D view, narrower text
+    colA, colB = st.columns(2)
+    with colA:
+        uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
+    with colB:
+        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
 
-    with col_left:
-        view = py3Dmol.view(width=700, height=500)
-        view.addModel(pdb_str, "pdb")
-        view.setStyle({'cartoon': {'color': 'spectrum'}})  # Rainbow coloring
-        view.setBackgroundColor("white")
-        view.zoomTo()
-        html = view._make_html()
-        st.components.v1.html(html, height=500)
+    def fetch_sequence(uniprot_id):
+        url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
+        response = requests.get(url)
+        if response.ok:
+            return response.text
+        else:
+            return None
 
-    with col_right:
-        st.markdown("📄 **PDB File Content:**")
-        st.text_area("Raw PDB Content", value=pdb_str, height=500, key="pdb_display")
-        st.download_button(
-            label="💾 Download PDB Content",
-            data=pdb_str,
-            file_name="uploaded_structure.pdb",
-            mime="chemical/x-pdb"
-        )
+    if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
+        if uniprot_id1 and uniprot_id2:
+            seq1 = fetch_sequence(uniprot_id1)
+            seq2 = fetch_sequence(uniprot_id2)
+            if seq1 and seq2:
+                combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
+                st.success("FASTA file generated successfully.")
+                st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
+                st.code(combined_fasta)
+
+                # Show the Colab link after FASTA is displayed
+                colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
+                st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook](" + colab_link + ")**", unsafe_allow_html=True)
+
+            else:
+                st.error("Error fetching sequences. Please check the UniProt IDs.")
+        else:
+            st.warning("Please enter both UniProt IDs.")
+
+    st.subheader("📦 Upload Predicted PDB File from AlphaFold")
+    pdb_file = st.file_uploader("Upload PDB file", type=["pdb"])
+
+    if pdb_file:
+        pdb_str = pdb_file.read().decode("utf-8")
+        st.success("✅ PDB uploaded. Rendering 3D structure...")
+
+        # Create layout: Viewer (left) | PDB text + Download (right)
+        col_left, col_right = st.columns([2, 1])  # Wider 3D view, narrower text
+
+        with col_left:
+            view = py3Dmol.view(width=700, height=500)
+            view.addModel(pdb_str, "pdb")
+            view.setStyle({'cartoon': {'color': 'spectrum'}})  # Rainbow coloring
+            view.setBackgroundColor("white")
+            view.zoomTo()
+            html = view._make_html()
+            st.components.v1.html(html, height=500)
+
+        with col_right:
+            st.markdown("📄 **PDB File Content:**")
+            st.text_area("Raw PDB Content", value=pdb_str, height=500, key="pdb_display")
+            st.download_button(
+                label="💾 Download PDB Content",
+                data=pdb_str,
+                file_name="uploaded_structure.pdb",
+                mime="chemical/x-pdb"
+            )
 
 # ---- GITHUB EDIT TAB ----
 with tabs[4]:
