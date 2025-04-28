@@ -11,7 +11,7 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="NEUROGEN PPI", layout="wide")
 
-# --- Inject MADEVoyager Font ---
+# --- FONT ---
 st.markdown("""
     <style>
     @font-face {
@@ -21,105 +21,88 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Theme Colors (Dark Mode Palette) ---
-body_bg = "#C4D8E2"            # Columbia Blue - Full Background and Navbar
-header_bg = "#3B5875"          # Police Blue - Header Background
-header_text_color = "#C4AEAD"  # Silver Pink - "NEUROGEN PPI" title
-general_text_color = "#001C3D" # Maastricht Blue - General Text
-button_bg = "#36454F"          # Charcoal - Download Button background
-button_text_color = "#DBE9F4"  # Azureish White - Button text
-table_bg = "#36454F"           # Charcoal - Table background
-table_border_color = "#5D8AA8" # Rackley - Table border
-search_bg = "#A7C7E7"          # Pastel Blue - Search bar background
-remaining_bg = "#8BA8B7"       # Pewter Blue - Other areas
+# --- THEME TOGGLE (icon-only + label below) ---
+col1, col2 = st.columns([0.94, 0.06])
+with col2:
+    dark_mode = st.toggle("", key="darkmode_toggle", value=False)
 
-# --- Inject Custom Unified Styling ---
+# --- COLOR THEMES ---
+light_theme = {
+    "body_bg": "#C4D8E2",
+    "header_bg": "#3B5875",
+    "header_text": "#C4AEAD",
+    "general_text": "#001C3D",
+    "button_bg": "#36454F",
+    "button_text": "#DBE9F4",
+    "input_bg": "#A7C7E7",
+    "table_bg": "#36454F",
+    "table_border": "#5D8AA8"
+}
+
+dark_theme = {
+    "body_bg": "#1B2B34",
+    "header_bg": "#3B5875",
+    "header_text": "#C4AEAD",
+    "general_text": "#DBE9F4",
+    "button_bg": "#36454F",
+    "button_text": "#DBE9F4",
+    "input_bg": "#4B6A88",
+    "table_bg": "#36454F",
+    "table_border": "#5D8AA8"
+}
+
+# Pick theme
+theme = dark_theme if dark_mode else light_theme
+
+# --- CUSTOM CSS FOR THEME ---
 st.markdown(f"""
     <style>
     body, .stApp {{
-        background-color: {body_bg};
-        color: {general_text_color};
+        background-color: {theme['body_bg']};
+        color: {theme['general_text']};
     }}
     .block-container {{
-        background-color: {body_bg} !important;
+        background-color: {theme['body_bg']} !important;
     }}
     .header-text {{
-        background-color: {header_bg};
+        background-color: {theme['header_bg']};
         padding: 1.2rem;
         font-family: 'MADEVoyager', sans-serif;
         font-size: 58px;
         text-align: center;
         margin-top: 0.5em;
         margin-bottom: 0.3em;
-        color: {header_text_color};
+        color: {theme['header_text']};
         letter-spacing: 2px;
         border-radius: 12px;
     }}
-    /* Navigation Tabs Styling */
-    div[data-baseweb="tab-list"] {{
-        background-color: {body_bg} !important;
-        border-bottom: none !important;
-        padding-left: 1rem;
-    }}
-    button[data-baseweb="tab"] {{
-        background-color: {body_bg} !important;
-        color: {general_text_color} !important;
-        border: none !important;
-        font-weight: bold;
-        font-size: 18px;
-        margin-right: 1.5rem;
-    }}
-    button[data-baseweb="tab"]:hover {{
-        color: #002B5B !important; /* Slightly darker Maastricht Blue on hover */
-        background-color: {body_bg} !important;
-        border: none !important;
-    }}
-    button[data-baseweb="tab"][aria-selected="true"] {{
-        border-bottom: 2px solid {general_text_color} !important;
-        font-weight: bold;
-    }}
-
-    /* Button Styling */
-    .stButton button, button {{
-        background-color: {button_bg} !important;
-        color: {button_text_color} !important;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-    }}
-    /* Input and Select Styling */
-    .stTextInput > div > input,
-    .stSelectbox > div,
-    .stMultiSelect > div,
-    .stSlider > div,
-    .stNumberInput > div,
-    .stTextArea > div > textarea {{
-        background-color: {search_bg} !important;
-        color: {general_text_color} !important;
-        border: 1px solid {general_text_color} !important;
-        border-radius: 6px;
-    }}
-    /* Data Frame and Table Styling */
-    .stDataFrame, .data-box {{
-        background-color: {table_bg} !important;
-        color: {general_text_color} !important;
-        border-radius: 10px;
-        padding: 1rem;
-        border: 1px solid {table_border_color};
-    }}
-    table {{
-        color: {general_text_color} !important;
-        background-color: {table_bg} !important;
-        border: 1px solid {table_border_color} !important;
-    }}
-    /* Heading Styling */
-    h1, h2, h3, h4, h5, h6 {{
-        color: {general_text_color} !important;
-        font-family: 'MADEVoyager', sans-serif;
+    /* Hide toggle label */
+    div[data-testid="stHorizontalBlock"] label {{
+        display: none;
     }}
     </style>
 """, unsafe_allow_html=True)
+
+# --- HEADER ---
+st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
+
+# --- ICON + Text ---
+icon = "🌙" if not dark_mode else "☀️"
+text_label = "Dark" if not dark_mode else "Light"
+
+with col2:
+    st.markdown(
+        f"""
+        <div style='text-align:center;'>
+            <div style='font-size:30px'>{icon}</div>
+            <div style='font-size:14px; margin-top:0.2em;'>{text_label}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# --- PAGE CONTENT ---
+st.write("This is your app content based on the selected theme!")
 
 # --- Header ---
 st.markdown("<div class='header-text'>NEUROGEN PPI</div>", unsafe_allow_html=True)
