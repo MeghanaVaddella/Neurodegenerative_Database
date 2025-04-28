@@ -248,12 +248,8 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
             protein_a_options = df_3d['Protein A'].dropna().unique().tolist()
             selected_protein_a = st.selectbox("🔍 Select Protein A", options=[""] + protein_a_options, key="select_protein_a")
         with col2:
-            if selected_protein_a:
-                # Filter Protein B based on selected Protein A
-                compatible_proteins_b = df_3d[df_3d['Protein A'] == selected_protein_a]['Protein B'].dropna().unique().tolist()
-                selected_protein_b = st.selectbox("🔍 Select Protein B", options=[""] + compatible_proteins_b, key="select_protein_b")
-            else:
-                st.selectbox("🔍 Select Protein B", options=[""], key="select_protein_b")
+            protein_b_options = df_3d['Protein B'].dropna().unique().tolist()
+            selected_protein_b = st.selectbox("🔍 Select Protein B", options=[""] + protein_b_options, key="select_protein_b")
 
         result_col1, result_col2 = st.columns(2)
         pdb_ids = []
@@ -354,12 +350,7 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
     with colA:
         uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
     with colB:
-        if uniprot_id1:
-            # Filter Protein B based on selected Protein A
-            compatible_proteins_b = df_3d[df_3d['Protein A'] == uniprot_id1]['Protein B'].dropna().unique().tolist()
-            uniprot_id2 = st.selectbox("Select UniProt ID of Protein 2:", options=[""] + compatible_proteins_b, key="afm_uid2")
-        else:
-            uniprot_id2 = st.selectbox("Select UniProt ID of Protein 2:", options=[""], key="afm_uid2")
+        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
 
     def fetch_sequence(uniprot_id):
         url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
