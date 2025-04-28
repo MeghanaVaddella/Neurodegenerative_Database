@@ -401,19 +401,17 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
         with col_left:
             view = py3Dmol.view(width=700, height=500)
             view.addModel(pdb_str, "pdb")
-            view.setStyle({'cartoon': {'color': 'spectrum'}})  # Rainbow coloring
+            view.setStyle({"cartoon": {}})
             view.setBackgroundColor("white")
             view.zoomTo()
-            html = view._make_html()
-            st.components.v1.html(html, height=500)
+            st.components.v1.html(view._make_html(), height=500)
 
         with col_right:
-            st.markdown("📄 **PDB File Content:**")
-            st.text_area("Raw PDB Content", value=pdb_str, height=500, key="pdb_display")
+            st.text_area("PDB Content", pdb_str, height=200)
             st.download_button(
-                label="💾 Download PDB Content",
+                label="Download PDB file",
                 data=pdb_str,
-                file_name="uploaded_structure.pdb",
+                file_name="predicted_structure.pdb",
                 mime="chemical/x-pdb"
             )
 
