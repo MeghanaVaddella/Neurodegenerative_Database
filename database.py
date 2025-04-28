@@ -237,66 +237,67 @@ with tabs[2]:
     st.download_button("Download No 3D Structure CSV", no_structure_df.to_csv(index=False), "No_3D_Structure.csv", "text/csv")
 
 
-# ---- 3D VISUALIZER TAB ----
-with tabs[3]:
-    st.write("### 3D Protein Structure Visualizer")
+# ---- 3D VISUALIZER TAB ---- with tabs[3]: 
+st.write("### 3D Protein Structure Visualizer")
 
-    # MolStar Viewer using PDB IDs from your dataset
-    if not df_3d.empty:
-        col1, col2 = st.columns(2)
+# MolStar Viewer using PDB IDs from your dataset
+if not df_3d.empty:
+    col1, col2 = st.columns(2)
 
-        with col1:
-            search_protein_a = st.text_input("🔍 Search Protein A")
-        with col2:
-            search_protein_b = st.text_input("🔍 Search Protein B")
+    with col1:
+        protein_a_options = df_3d['Protein A'].dropna().unique().tolist()
+        selected_protein_a = st.selectbox("🔍 Select Protein A", options=[""] + protein_a_options, key="select_protein_a")
+    with col2:
+        protein_b_options = df_3d['Protein B'].dropna().unique().tolist()
+        selected_protein_b = st.selectbox("🔍 Select Protein B", options=[""] + protein_b_options, key="select_protein_b")
 
-        result_col1, result_col2 = st.columns(2)
-        pdb_ids = []
+    result_col1, result_col2 = st.columns(2)
+    pdb_ids = []
 
-        if search_protein_a:
-            protein_a_data = df_3d[df_3d['Protein A'].str.contains(search_protein_a, case=False, na=False)]
-            if not protein_a_data.empty:
-                row = protein_a_data.iloc[0]
-                with result_col1:
-                    st.write(f"**🧬 Protein A:** {row['Protein A']}")
-                    st.write(f"**UniProt ID A:** {row['UniProtID A']}")
+    if selected_protein_a:
+        protein_a_data = df_3d[df_3d['Protein A'] == selected_protein_a]
+        if not protein_a_data.empty:
+            row = protein_a_data.iloc[0]
+            with result_col1:
+                st.write(f"**🧬 Protein A:** {row['Protein A']}")
+                st.write(f"**UniProt ID A:** {row['UniProtID A']}")
 
-                    pdb_ids_a = row['PDB ID A'].split(", ")
-                    if pdb_ids_a[0] != "NA":
-                        pdb_links_a = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_a])
-                        st.markdown(f"🔗 **PDB IDs A:** {pdb_links_a}", unsafe_allow_html=True)
-                        pdb_ids.extend(pdb_ids_a)
-            else:
-                with result_col1:
-                    st.warning("No matching Protein A found.")
-
-        if search_protein_b:
-            protein_b_data = df_3d[df_3d['Protein B'].str.contains(search_protein_b, case=False, na=False)]
-            if not protein_b_data.empty:
-                row = protein_b_data.iloc[0]
-                with result_col2:
-                    st.write(f"**🧬 Protein B:** {row['Protein B']}")
-                    st.write(f"**UniProt ID B:** {row['UniProtID B']}")
-
-                    pdb_ids_b = row['PDB ID B'].split(", ")
-                    if pdb_ids_b[0] != "NA":
-                        pdb_links_b = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_b])
-                        st.markdown(f"🔗 **PDB IDs B:** {pdb_links_b}", unsafe_allow_html=True)
-                        pdb_ids.extend(pdb_ids_b)
-            else:
-                with result_col2:
-                    st.warning("No matching Protein B found.")
-
-        st.write("### 🧬 Mol* (MolStar) Viewer")
-        pdb_ids = list(filter(lambda x: x != "NA", pdb_ids))
-
-        if pdb_ids:
-            molstar_url = f"https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
-            st.components.v1.iframe(molstar_url, width=1000, height=600)
+                pdb_ids_a = row['PDB ID A'].split(", ")
+                if pdb_ids_a[0] != "NA":
+                    pdb_links_a = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_a])
+                    st.markdown(f"🔗 **PDB IDs A:** {pdb_links_a}", unsafe_allow_html=True)
+                    pdb_ids.extend(pdb_ids_a)
         else:
-            st.warning("No valid PDB IDs found for visualization.")
+            with result_col1:
+                st.warning("No matching Protein A found.")
 
-    st.markdown("---")
+    if selected_protein_b:
+        protein_b_data = df_3d[df_3d['Protein B'] == selected_protein_b]
+        if not protein_b_data.empty:
+            row = protein_b_data.iloc[0]
+            with result_col2:
+                st.write(f"**🧬 Protein B:** {row['Protein B']}")
+                st.write(f"**UniProt ID B:** {row['UniProtID B']}")
+
+                pdb_ids_b = row['PDB ID B'].split(", ")
+                if pdb_ids_b[0] != "NA":
+                    pdb_links_b = " | ".join([f"[{pdb}](https://www.rcsb.org/structure/{pdb})" for pdb in pdb_ids_b])
+                    st.markdown(f"🔗 **PDB IDs B:** {pdb_links_b}", unsafe_allow_html=True)
+                    pdb_ids.extend(pdb_ids_b)
+        else:
+            with result_col2:
+                st.warning("No matching Protein B found.")
+
+    st.write("### 🧬 Mol* (MolStar) Viewer")
+    pdb_ids = list(filter(lambda x: x != "NA", pdb_ids))
+
+    if pdb_ids:
+        molstar_url = f"https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
+        st.components.v1.iframe(molstar_url, width=1000, height=600)
+    else:
+        st.warning("No valid PDB IDs found for visualization.")
+
+st.markdown("---")
 
     # AlphaFold-based 3D Viewer using py3Dmol
     st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
