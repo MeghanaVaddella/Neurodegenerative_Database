@@ -357,11 +357,14 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
 
     colA, colB = st.columns(2)
     with colA:
-        uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1:", key="afm_uid1")
+        # Search for Protein 1 using UniProt search bar
+        uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1 (Search):", key="afm_uid1", help="Search for a UniProt ID")
     with colB:
-        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2:", key="afm_uid2")
+        # Search for Protein 2 using UniProt search bar
+        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2 (Search):", key="afm_uid2", help="Search for a UniProt ID")
 
     def fetch_sequence(uniprot_id):
+        """Fetches the sequence for a given UniProt ID using the UniProt REST API"""
         url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
         response = requests.get(url)
         if response.ok:
@@ -371,8 +374,10 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
 
     if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
         if uniprot_id1 and uniprot_id2:
+            # Fetch sequences for both proteins
             seq1 = fetch_sequence(uniprot_id1)
             seq2 = fetch_sequence(uniprot_id2)
+            
             if seq1 and seq2:
                 combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
                 st.success("FASTA file generated successfully.")
@@ -381,7 +386,7 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
 
                 # Show the Colab link after FASTA is displayed
                 colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
-                st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook](" + colab_link + ")**", unsafe_allow_html=True)
+                st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook]({colab_link})**", unsafe_allow_html=True)
 
             else:
                 st.error("Error fetching sequences. Please check the UniProt IDs.")
@@ -393,27 +398,12 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
 
     if pdb_file:
         pdb_str = pdb_file.read().decode("utf-8")
-        st.success("✅ PDB uploaded. Rendering 3D structure...")
-
-        # Create layout: Viewer (left) | PDB text + Download (right)
-        col_left, col_right = st.columns([2, 1])  # Wider 3D view, narrower text
-
-        with col_left:
-            view = py3Dmol.view(width=700, height=500)
-            view.addModel(pdb_str, "pdb")
-            view.setStyle({"cartoon": {}})
-            view.setBackgroundColor("white")
-            view.zoomTo()
-            st.components.v1.html(view._make_html(), height=500)
-
-        with col_right:
-            st.text_area("PDB Content", pdb_str, height=200)
-            st.download_button(
-                label="Download PDB file",
-                data=pdb_str,
-                file_name="predicted_structure.pdb",
-                mime="chemical/x-pdb"
-            )
+        viewer = py3Dmol.view(width=1000, height=600)
+        viewer.addModel(pdb_str, "pdb")
+        viewer.setStyle({'model': 0}, {'cartoon': {'color': 'spectrum'}})
+        viewer.setBackgroundColor("white")
+        viewer.zoomTo()
+        st.components.v1.html(viewer._make_html(), height=600)
 
 # ---- GITHUB EDIT TAB ----
 with tabs[4]:
