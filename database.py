@@ -299,57 +299,33 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
 
     st.markdown("---")
 
-   # AlphaFold-based 3D Viewer using py3Dmol
-st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
+    # AlphaFold-based 3D Viewer using py3Dmol
+    st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
 
-# Fetch the AlphaFold PDB file for a given UniProt ID
-def fetch_alphafold_pdb(uniprot_id):
-    url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.text
-    return None
+    # Fetch the AlphaFold PDB file for a given UniProt ID
+    def fetch_alphafold_pdb(uniprot_id):
+        url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.text
+        return None
 
-# Protein selection for AlphaFold using the Protein A and Protein B lists
-col3, col4 = st.columns(2)
-with col3:
-    # Get a list of UniProt IDs for Protein A from the dataframe (or another source)
-    protein_a_options = df_3d['UniProtID A'].dropna().unique().tolist()  # Assuming df_3d has 'UniProtID A'
-    selected_uid1 = st.selectbox("🔍 Select UniProt ID for Protein A (AlphaFold)", options=[""] + protein_a_options, key="select_uid1")
+    # Protein selection for AlphaFold using the Protein A and Protein B lists
+    col3, col4 = st.columns(2)
+    with col3:
+        # Get a list of UniProt IDs for Protein A from the dataframe (or another source)
+        protein_a_options = df_3d['UniProtID A'].dropna().unique().tolist()  # Assuming df_3d has 'UniProtID A'
+        selected_uid1 = st.selectbox("🔍 Select UniProt ID for Protein A (AlphaFold)", options=[""] + protein_a_options, key="select_uid1")
 
-with col4:
-    # Get a list of UniProt IDs for Protein B from the dataframe (or another source)
-    protein_b_options = df_3d['UniProtID B'].dropna().unique().tolist()  # Assuming df_3d has 'UniProtID B'
-    selected_uid2 = st.selectbox("🔍 Select UniProt ID for Protein B (AlphaFold)", options=[""] + protein_b_options, key="select_uid2")
+    with col4:
+        # Get a list of UniProt IDs for Protein B from the dataframe (or another source)
+        protein_b_options = df_3d['UniProtID B'].dropna().unique().tolist()  # Assuming df_3d has 'UniProtID B'
+        selected_uid2 = st.selectbox("🔍 Select UniProt ID for Protein B (AlphaFold)", options=[""] + protein_b_options, key="select_uid2")
 
-# Check if both proteins are selected and fetch their PDBs
-if selected_uid1 and selected_uid2:
-    pdb1 = fetch_alphafold_pdb(selected_uid1)
-    pdb2 = fetch_alphafold_pdb(selected_uid2)
-
-    if pdb1 and pdb2:
-        st.subheader("🧪 AlphaFold 3D Viewer")
-        viewer = py3Dmol.view(width=1000, height=600)
-        viewer.addModel(pdb1, "pdb")
-        viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
-        viewer.addModel(pdb2, "pdb")
-        viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
-        viewer.setBackgroundColor("white")
-        viewer.zoomTo()
-        st.components.v1.html(viewer._make_html(), height=600)
-
-        # Combine both PDBs and allow user to download them
-        combined_pdb = f"REMARK   Protein A: {selected_uid1}\n{pdb1}\nREMARK   Protein B: {selected_uid2}\n{pdb2}"
-        st.subheader("💾 Download Combined Structure")
-        st.download_button(
-            label="Download PDB for Chimera",
-            data=combined_pdb,
-            file_name=f"{selected_uid1}_{selected_uid2}_combined.pdb",
-            mime="chemical/x-pdb"
-        )
-    else:
-        st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
-
+    # Check if both proteins are selected and fetch their PDBs
+    if selected_uid1 and selected_uid2:
+        pdb1 = fetch_alphafold_pdb(selected_uid1)
+        pdb2 = fetch_alphafold_pdb(selected_uid2)
 
         if pdb1 and pdb2:
             st.subheader("🧪 AlphaFold 3D Viewer")
@@ -362,12 +338,13 @@ if selected_uid1 and selected_uid2:
             viewer.zoomTo()
             st.components.v1.html(viewer._make_html(), height=600)
 
-            combined_pdb = f"REMARK   Protein A: {uid1}\n{pdb1}\nREMARK   Protein B: {uid2}\n{pdb2}"
+            # Combine both PDBs and allow user to download them
+            combined_pdb = f"REMARK   Protein A: {selected_uid1}\n{pdb1}\nREMARK   Protein B: {selected_uid2}\n{pdb2}"
             st.subheader("💾 Download Combined Structure")
             st.download_button(
                 label="Download PDB for Chimera",
                 data=combined_pdb,
-                file_name=f"{uid1}_{uid2}_combined.pdb",
+                file_name=f"{selected_uid1}_{selected_uid2}_combined.pdb",
                 mime="chemical/x-pdb"
             )
         else:
