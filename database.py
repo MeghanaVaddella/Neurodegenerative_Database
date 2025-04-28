@@ -241,16 +241,17 @@ import requests
 import py3Dmol
 
 # ---- 3D VISUALIZER TAB ----
-with tabs[3]:  # Check if the 3D Visualizer tab is selected
+with tabs[3]:  # 3D Visualizer tab
     st.write("### 3D Protein Structure Visualizer")
 
-    # MolStar Viewer using PDB IDs from your dataset
+    # MolStar Viewer using PDB IDs from dataset
     if not df_3d.empty:
         col1, col2 = st.columns(2)
 
         with col1:
             protein_a_options = df_3d['Protein A'].dropna().unique().tolist()
             selected_protein_a = st.selectbox("🔍 Select Protein A", options=[""] + protein_a_options, key="select_protein_a")
+
         with col2:
             protein_b_options = df_3d['Protein B'].dropna().unique().tolist()
             selected_protein_b = st.selectbox("🔍 Select Protein B", options=[""] + protein_b_options, key="select_protein_b")
@@ -258,7 +259,7 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
         result_col1, result_col2 = st.columns(2)
         pdb_ids = []
 
-        # Protein A visualization
+        # Visualize Protein A
         if selected_protein_a:
             protein_a_data = df_3d[df_3d['Protein A'] == selected_protein_a]
             if not protein_a_data.empty:
@@ -275,7 +276,7 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
                 with result_col1:
                     st.warning("No matching Protein A found.")
 
-        # Protein B visualization
+        # Visualize Protein B
         if selected_protein_b:
             protein_b_data = df_3d[df_3d['Protein B'] == selected_protein_b]
             if not protein_b_data.empty:
@@ -292,98 +293,85 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
                 with result_col2:
                     st.warning("No matching Protein B found.")
 
-        # MolStar visualization
+        # Mol* Viewer
         st.write("### 🧬 Mol* (MolStar) Viewer")
         pdb_ids = list(filter(lambda x: x != "NA", pdb_ids))
 
         if pdb_ids:
-            molstar_url = f"https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
+            molstar_url = "https://molstar.org/viewer/?url=" + ",".join([f"https://files.rcsb.org/download/{pdb}.pdb" for pdb in pdb_ids])
             st.components.v1.iframe(molstar_url, width=1000, height=600)
         else:
             st.warning("No valid PDB IDs found for visualization.")
 
     st.markdown("---")
 
-    # AlphaFold-based 3D Viewer using py3Dmol
+    # ---- AlphaFold 3D Viewer ----
     st.write("### 🧬 AlphaFold-based 3D Viewer (py3Dmol)")
 
     def fetch_alphafold_pdb(uniprot_id):
-        """Fetch the AlphaFold PDB file for a given UniProt ID"""
+        """Fetch AlphaFold PDB file given a UniProt ID"""
         url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v4.pdb"
         response = requests.get(url)
-        if response.status_code == 200:
-            return response.text
-        return None
+        return response.text if response.status_code == 200 else None
 
-    # Protein selection for AlphaFold using the Protein A and Protein B lists
     col3, col4 = st.columns(2)
     with col3:
-        protein_a_options = df_3d['UniProtID A'].dropna().unique().tolist()
-        selected_uid1 = st.selectbox("🔍 Select UniProt ID for Protein A (AlphaFold)", options=[""] + protein_a_options, key="select_uid1")
+        uniprot_a_options = df_3d['UniProtID A'].dropna().unique().tolist()
+        selected_uniprot_a = st.selectbox("🔍 Select UniProt ID A (AlphaFold)", options=[""] + uniprot_a_options, key="select_uniprot_a")
 
     with col4:
-        protein_b_options = df_3d['UniProtID B'].dropna().unique().tolist()
-        selected_uid2 = st.selectbox("🔍 Select UniProt ID for Protein B (AlphaFold)", options=[""] + protein_b_options, key="select_uid2")
+        uniprot_b_options = df_3d['UniProtID B'].dropna().unique().tolist()
+        selected_uniprot_b = st.selectbox("🔍 Select UniProt ID B (AlphaFold)", options=[""] + uniprot_b_options, key="select_uniprot_b")
 
-    # Check if both proteins are selected and fetch their PDBs
-    if selected_uid1 and selected_uid2:
-        pdb1 = fetch_alphafold_pdb(selected_uid1)
-        pdb2 = fetch_alphafold_pdb(selected_uid2)
+    if selected_uniprot_a and selected_uniprot_b:
+        pdb_a = fetch_alphafold_pdb(selected_uniprot_a)
+        pdb_b = fetch_alphafold_pdb(selected_uniprot_b)
 
-        if pdb1 and pdb2:
+        if pdb_a and pdb_b:
             st.subheader("🧪 AlphaFold 3D Viewer")
             viewer = py3Dmol.view(width=1000, height=600)
-            viewer.addModel(pdb1, "pdb")
+            viewer.addModel(pdb_a, "pdb")
             viewer.setStyle({'model': 0}, {'cartoon': {'color': 'salmon'}})
-            viewer.addModel(pdb2, "pdb")
+            viewer.addModel(pdb_b, "pdb")
             viewer.setStyle({'model': 1}, {'cartoon': {'color': 'skyblue'}})
             viewer.setBackgroundColor("white")
             viewer.zoomTo()
             st.components.v1.html(viewer._make_html(), height=600)
 
-            # Combine both PDBs and allow user to download them
-            combined_pdb = f"REMARK   Protein A: {selected_uid1}\n{pdb1}\nREMARK   Protein B: {selected_uid2}\n{pdb2}"
+            # Download combined PDB
+            combined_pdb = f"REMARK   Protein A: {selected_uniprot_a}\n{pdb_a}\nREMARK   Protein B: {selected_uniprot_b}\n{pdb_b}"
             st.subheader("💾 Download Combined Structure")
             st.download_button(
-                label="Download PDB for Chimera",
+                label="⬇️ Download Combined PDB",
                 data=combined_pdb,
-                file_name=f"{selected_uid1}_{selected_uid2}_combined.pdb",
+                file_name=f"{selected_uniprot_a}_{selected_uniprot_b}_combined.pdb",
                 mime="chemical/x-pdb"
             )
         else:
-            st.error("❌ One or both PDB files could not be fetched from AlphaFold.")
+            st.error("❌ Failed to fetch one or both AlphaFold PDB files.")
 
     st.markdown("---")
 
-    # AlphaFold-Multimer FASTA Generator + Custom PDB Upload
-    st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
+    # ---- AlphaFold-Multimer FASTA Generator ----
+    st.write("### 🧬 Predict Interactions using AlphaFold-Multimer")
 
-    # Protein selection for AlphaFold using the Protein A and Protein B lists
-    col3, col4 = st.columns(2)
-    with col3:
-        protein_a_options = df_3d['UniProtID A'].dropna().unique().tolist()
-        selected_uid1 = st.selectbox("🔍 Select UniProt ID for Protein A (AlphaFold)", options=[""] + protein_a_options, key="select_uid1")
-
-    with col4:
-        protein_b_options = df_3d['UniProtID B'].dropna().unique().tolist()
-        selected_uid2 = st.selectbox("🔍 Select UniProt ID for Protein B (AlphaFold)", options=[""] + protein_b_options, key="select_uid2")
-
-    # Function to fetch the sequence from UniProt for a given UniProt ID
     def fetch_sequence(uniprot_id):
-        """Fetches the sequence for a given UniProt ID using the UniProt REST API"""
+        """Fetch protein sequence from UniProt"""
         url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
         response = requests.get(url)
-        if response.ok:
-            return response.text
-        else:
-            return None
+        return response.text if response.ok else None
 
-    # Generate FASTA file and download
+    fasta_col1, fasta_col2 = st.columns(2)
+    with fasta_col1:
+        fasta_uid1 = st.selectbox("🔍 Select UniProt ID for Protein A (FASTA)", options=[""] + uniprot_a_options, key="select_fasta_a")
+
+    with fasta_col2:
+        fasta_uid2 = st.selectbox("🔍 Select UniProt ID for Protein B (FASTA)", options=[""] + uniprot_b_options, key="select_fasta_b")
+
     if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
-        if selected_uid1 and selected_uid2:
-            # Fetch sequences for both proteins
-            seq1 = fetch_sequence(selected_uid1)
-            seq2 = fetch_sequence(selected_uid2)
+        if fasta_uid1 and fasta_uid2:
+            seq1 = fetch_sequence(fasta_uid1)
+            seq2 = fetch_sequence(fasta_uid2)
 
             if seq1 and seq2:
                 combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
@@ -391,17 +379,18 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
                 st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
                 st.code(combined_fasta)
 
-                # Show the Colab link after FASTA is displayed
                 colab_link = "https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb"
-                st.markdown(f"🔗 **[Open in Google Colab: AlphaFold-Multimer Notebook]({colab_link})**", unsafe_allow_html=True)
-
+                st.markdown(f"🔗 **[Open AlphaFold-Multimer in Google Colab]({colab_link})**", unsafe_allow_html=True)
             else:
-                st.error("Error fetching sequences. Please check the UniProt IDs.")
+                st.error("❌ Error fetching sequences. Check UniProt IDs.")
         else:
-            st.warning("Please enter both UniProt IDs.")
+            st.warning("⚠️ Please select both UniProt IDs for FASTA generation.")
 
-    st.subheader("📦 Upload Predicted PDB File from AlphaFold")
-    pdb_file = st.file_uploader("Upload PDB file", type=["pdb"])
+    st.markdown("---")
+
+    # ---- Upload PDB file ----
+    st.write("### 📦 Upload Predicted PDB Structure")
+    pdb_file = st.file_uploader("Upload PDB file (predicted or modeled)", type=["pdb"])
 
     if pdb_file:
         pdb_str = pdb_file.read().decode("utf-8")
