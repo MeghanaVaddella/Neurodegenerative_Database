@@ -55,6 +55,31 @@ st.markdown(f"""
         letter-spacing: 2px;
         border-radius: 12px;
     }}
+    /* Navigation Tabs Styling */
+    div[data-baseweb="tab-list"] {{
+        background-color: {body_bg} !important;
+        border-bottom: none !important;
+        padding-left: 1rem;
+    }}
+    button[data-baseweb="tab"] {{
+        background-color: {body_bg} !important;
+        color: {general_text_color} !important;
+        border: none !important;
+        font-weight: bold;
+        font-size: 18px;
+        margin-right: 1.5rem;
+    }}
+    button[data-baseweb="tab"]:hover {{
+        color: #002B5B !important; /* Slightly darker Maastricht Blue on hover */
+        background-color: {body_bg} !important;
+        border: none !important;
+    }}
+    button[data-baseweb="tab"][aria-selected="true"] {{
+        border-bottom: 2px solid {general_text_color} !important;
+        font-weight: bold;
+    }}
+
+    /* Button Styling */
     .stButton button, button {{
         background-color: {button_bg} !important;
         color: {button_text_color} !important;
@@ -63,6 +88,7 @@ st.markdown(f"""
         border-radius: 8px;
         padding: 0.5rem 1rem;
     }}
+    /* Input and Select Styling */
     .stTextInput > div > input,
     .stSelectbox > div,
     .stMultiSelect > div,
@@ -74,6 +100,7 @@ st.markdown(f"""
         border: 1px solid {general_text_color} !important;
         border-radius: 6px;
     }}
+    /* Data Frame and Table Styling */
     .stDataFrame, .data-box {{
         background-color: {table_bg} !important;
         color: {general_text_color} !important;
@@ -81,22 +108,12 @@ st.markdown(f"""
         padding: 1rem;
         border: 1px solid {table_border_color};
     }}
-    .stTabs > div > div {{
-        background-color: {remaining_bg} !important;
-        color: {general_text_color} !important;
-        border: none !important;
-    }}
-    .stTabs button {{
-        background-color: {body_bg} !important;
-        color: {general_text_color} !important;
-        border: none;
-        font-weight: bold;
-    }}
     table {{
         color: {general_text_color} !important;
         background-color: {table_bg} !important;
         border: 1px solid {table_border_color} !important;
     }}
+    /* Heading Styling */
     h1, h2, h3, h4, h5, h6 {{
         color: {general_text_color} !important;
         font-family: 'MADEVoyager', sans-serif;
