@@ -226,6 +226,16 @@ with tabs[1]:
         else:
             st.warning("PPI data is empty.")
 
+# ---- 3D STRUCTURE TAB ----
+with tabs[2]:
+    st.header("3D Structure Data")
+    st.dataframe(df_3d, use_container_width=True, hide_index=True)
+    st.download_button("Download 3D Structure CSV", df_3d.to_csv(index=False), "3D_structure_data.csv", "text/csv")
+
+    st.subheader("No 3D Structure Data")
+    st.dataframe(no_structure_df, use_container_width=True, hide_index=True)
+    st.download_button("Download No 3D Structure CSV", no_structure_df.to_csv(index=False), "No_3D_Structure.csv", "text/csv")
+
 # ---- 3D VISUALIZER TAB ----
 with tabs[3]:  # Check if the 3D Visualizer tab is selected
     st.write("### 3D Protein Structure Visualizer")
