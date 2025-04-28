@@ -353,30 +353,47 @@ with tabs[3]:  # Check if the 3D Visualizer tab is selected
     st.markdown("---")
 
     # AlphaFold-Multimer FASTA Generator + Custom PDB Upload
-    st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
+st.write("### 🧬 Predict Protein-Protein Interactions using AlphaFold-Multimer")
 
-    colA, colB = st.columns(2)
-    with colA:
-        # Search for Protein 1 using UniProt search bar
-        uniprot_id1 = st.text_input("Enter UniProt ID of Protein 1 (Search):", key="afm_uid1", help="Search for a UniProt ID")
-    with colB:
-        # Search for Protein 2 using UniProt search bar
-        uniprot_id2 = st.text_input("Enter UniProt ID of Protein 2 (Search):", key="afm_uid2", help="Search for a UniProt ID")
+# Protein selection for AlphaFold using the Protein A and Protein B lists
+col3, col4 = st.columns(2)
+with col3:
+    # Get a list of UniProt IDs for Protein A from the dataframe (or another source)
+    protein_a_options = df_3d['UniProtID A'].dropna().unique().tolist()  # Assuming df_3d has 'UniProtID A'
+    selected_uid1 = st.selectbox("🔍 Select UniProt ID for Protein A (AlphaFold)", options=[""] + protein_a_options, key="select_uid1")
 
-    def fetch_sequence(uniprot_id):
-        """Fetches the sequence for a given UniProt ID using the UniProt REST API"""
-        url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
-        response = requests.get(url)
-        if response.ok:
-            return response.text
+with col4:
+    # Get a list of UniProt IDs for Protein B from the dataframe (or another source)
+    protein_b_options = df_3d['UniProtID B'].dropna().unique().tolist()  # Assuming df_3d has 'UniProtID B'
+    selected_uid2 = st.selectbox("🔍 Select UniProt ID for Protein B (AlphaFold)", options=[""] + protein_b_options, key="select_uid2")
+
+# Function to fetch the sequence from UniProt for a given UniProt ID
+def fetch_sequence(uniprot_id):
+    """Fetches the sequence for a given UniProt ID using the UniProt REST API"""
+    url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
+    response = requests.get(url)
+    if response.ok:
+        return response.text
+    else:
+        return None
+
+# Generate FASTA file and download
+if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
+    if selected_uid1 and selected_uid2:
+        # Fetch sequences for both proteins
+        seq1 = fetch_sequence(selected_uid1)
+        seq2 = fetch_sequence(selected_uid2)
+        
+        if seq1 and seq2:
+            combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
+            st.success("FASTA file generated successfully.")
+            st.download_button("⬇️ Download FASTA", data=combined_fasta, file_name="multimer_input.fasta", mime="text/plain")
+            st.code(combined_fasta)
         else:
-            return None
+            st.error("Error fetching sequences. Please check the UniProt IDs.")
+    else:
+        st.warning("Please select both UniProt IDs.")
 
-    if st.button("Generate AlphaFold-Multimer Input (FASTA)"):
-        if uniprot_id1 and uniprot_id2:
-            # Fetch sequences for both proteins
-            seq1 = fetch_sequence(uniprot_id1)
-            seq2 = fetch_sequence(uniprot_id2)
             
             if seq1 and seq2:
                 combined_fasta = f"{seq1.strip()}\n{seq2.strip()}"
